@@ -1,15 +1,9 @@
-import { ReactNode } from "react";
+"use client";
+import Link from "next/link";
+import type { ReactNode } from "react";
+import { LanguageToggle, useLanguage } from "@/app/components/language-provider";
 
-interface AuthLayoutProps {
-  children: ReactNode;
-}
-
-export function AuthLayout({ children }: AuthLayoutProps) {
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-muted/30 px-4">
-      <div className="w-full max-w-md rounded-xl border bg-background p-8 shadow-lg">
-        {children}
-      </div>
-    </div>
-  );
+export function AuthLayout({ children }: { children: ReactNode }) {
+  const { tr } = useLanguage();
+  return <main className="grid min-h-screen bg-[#f7f9ff] lg:grid-cols-[1fr_1.05fr]"><section className="relative hidden overflow-hidden bg-gradient-to-br from-indigo-950 via-indigo-700 to-cyan-500 p-12 text-white lg:flex lg:flex-col lg:justify-between"><div className="absolute -left-24 top-0 h-96 w-96 rounded-full bg-emerald-300/30 blur-3xl" /><Link href="/" className="relative flex items-center gap-3"><span className="grid h-11 w-11 place-items-center rounded-2xl bg-white/15 text-xl text-emerald-200">✦</span><span><strong className="block">Spiders AI</strong><small className="text-indigo-200">{tr("طريقتك الجديدة للعمل", "Your new way of working")}</small></span></Link><div className="relative max-w-xl"><p className="text-sm font-bold text-emerald-200">SPIDERS AI</p><h1 className="mt-5 text-4xl font-black leading-snug">{tr("راقب الفرص، حلّلها، ونظّم عمل فريقك.", "Monitor opportunities, analyze them, and organize your team.")}</h1><p className="mt-4 leading-8 text-indigo-100">{tr("مساحة عمل واحدة للمنافسات والتحليلات والمهام والوثائق والمواعيد.", "One focused workspace for competitions, analysis, tasks, documents, and deadlines.")}</p></div><p className="relative text-xs text-indigo-200">© 2026 Spiders AI</p></section><section className="relative flex items-center justify-center px-5 py-12"><div className="absolute end-5 top-5 flex items-center gap-3"><LanguageToggle /><Link href="/" className="text-sm font-bold text-indigo-700 lg:hidden">Spiders AI</Link></div><div className="w-full max-w-md rounded-3xl border border-white bg-white p-7 shadow-2xl shadow-indigo-100 md:p-9">{children}</div></section></main>;
 }

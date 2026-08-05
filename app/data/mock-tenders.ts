@@ -1,5 +1,5 @@
 import type { Tender } from "../types";
-export const initialTenders: Tender[] =[
+const rawTenders =[
   {
     "id": 999001,
     "reference_number": "MOCK-001-2026",
@@ -146,7 +146,29 @@ export const initialTenders: Tender[] =[
     "agreement_duration": null,
     "location_details": ""
   },
-]
+];
+
+export const initialTenders: Tender[] = rawTenders.map((tender) => ({
+  id: String(tender.id),
+  reference: tender.reference_number,
+  title: tender.tender_name,
+  agency: tender.agency.name,
+  category: tender.classification_field,
+  region: tender.execution_locations[0]?.region.name ?? "غير محدد",
+  publishDate: tender.created_at,
+  deadline: tender.last_submission_date,
+  status: "new",
+  score: 70,
+  value: tender.document_cost,
+  purpose: tender.purpose,
+  requirements: [tender.submission_method, tender.contract_duration],
+  summary: tender.description,
+  recommendation: "تحتاج المنافسة إلى مراجعة الفريق.",
+  documents: tender.attachments.map((attachment) => ({
+    name: attachment.title,
+    size: "—",
+  })),
+}));
 
 export const statusLabels = {
   new: "جديدة",

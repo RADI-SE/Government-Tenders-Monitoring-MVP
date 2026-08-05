@@ -1,2 +1,5 @@
-import { AuthShell } from "../components/auth-shell";
-export default function LoginPage() { return <AuthShell mode="login" />; }
+import { redirect } from "next/navigation";
+
+export default function LoginPage() {
+  redirect("/sign-in");
+}

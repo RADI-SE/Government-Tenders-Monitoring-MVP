@@ -1,23 +1,9 @@
-import {
-  LayoutDashboard,
-  FileText,
-  Bell,
-} from "lucide-react";
+import { Archive, FileText, History, LayoutDashboard, ListTodo } from "lucide-react";
 
 export const sidebarRoutes = [
-  {
-    title: "Main Menu",
-    href: "/",
-    icon: LayoutDashboard,
-  },
-  {
-    title: "Competitions",
-    href: "/dashboard/competitions",
-    icon: FileText,
-  },
-  {
-    title: "Notifications",
-    href: "/dashboard/notifications",
-    icon: Bell,
-  },
+  { ar: "الرئيسية", en: "Overview", href: "/dashboard", icon: LayoutDashboard },
+  { ar: "المنافسات", en: "Competitions", href: "/dashboard/competitions", icon: FileText },
+  { ar: "سير العمل", en: "Workflow", href: "/dashboard/tasks", icon: ListTodo },
+  { ar: "سجل الاستيراد", en: "Data imports", href: "/dashboard/imports", icon: History },
+  { ar: "الأرشيف", en: "Archive", href: "/dashboard/archive", icon: Archive },
 ];
