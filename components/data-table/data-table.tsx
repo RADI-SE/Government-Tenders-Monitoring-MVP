@@ -35,6 +35,9 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
     getFilteredRowModel: getFilteredRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    initialState: {
+      columnVisibility: { region: false, activity: false, tender_type: false, budget: false, keyword: false },
+    },
   });
 
   return (

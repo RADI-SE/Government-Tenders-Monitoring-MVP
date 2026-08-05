@@ -8,6 +8,8 @@ export function SignUpForm() {
       path="/sign-up"
       routing="path"
       signInUrl="/sign-in"
+      forceRedirectUrl="/dashboard"
+      fallbackRedirectUrl="/dashboard"
       appearance={{
         elements: {
           card: "shadow-none border-0 bg-transparent",

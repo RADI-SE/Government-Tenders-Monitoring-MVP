@@ -38,3 +38,13 @@
     @apply bg-background text-foreground;}
   html {
     @apply font-sans;}}
+
+@keyframes brandFloat {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(-1deg); }
+  50% { transform: translate3d(0, -12px, 0) rotate(1deg); }
+}
+.brand-float { animation: brandFloat 5.5s ease-in-out infinite; }
+.brand-float-delay { animation-delay: -2.75s; }
+@media (prefers-reduced-motion: reduce) {
+  .brand-float { animation: none; }
+}

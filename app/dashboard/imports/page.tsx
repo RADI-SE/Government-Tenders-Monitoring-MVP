@@ -14,15 +14,19 @@ export default function ImportsPage() {
   const jobs = useQuery(api.importJobs.getHistory, {});
   const startJob = useMutation(api.importJobs.startJob);
   const completeJob = useMutation(api.importJobs.completeJob);
+  const failJob = useMutation(api.importJobs.failJob);
   const [scanning, setScanning] = useState(false);
   const [results, setResults] = useState<string[]>([]);
 
   async function runMockScan() {
     setScanning(true);
+    let jobId: Awaited<ReturnType<typeof startJob>> | undefined;
     try {
-      const jobId = await startJob({ source: "etimad" });
+      jobId = await startJob({ source: "etimad" });
       await completeJob({ jobId, totalFetched: mockResults.length, totalImported: mockResults.length, totalSkipped: 0, totalFailed: 0 });
       setResults(mockResults);
+    } catch (error) {
+      if (jobId) await failJob({ jobId, errorMessage: error instanceof Error ? error.message : "Mock scan failed" });
     } finally { setScanning(false); }
   }
 
