@@ -1,0 +1,11 @@
+# Deployment used by `npx convex dev`
+CONVEX_DEPLOYMENT=dev:adventurous-seahorse-792 # team: radi, project: gtm-mvp
+
+NEXT_PUBLIC_CONVEX_URL=https://adventurous-seahorse-792.convex.cloud
+
+NEXT_PUBLIC_CONVEX_SITE_URL=https://adventurous-seahorse-792.convex.site
+
+CLERK_FRONTEND_API_URL=https://relaxing-sunfish-1.clerk.accounts.dev
+
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_cmVsYXhpbmctc3VuZmlzaC0xLmNsZXJrLmFjY291bnRzLmRldiQ
+CLERK_SECRET_KEY=sk_test_bCLZTHoVKYmz5YVNJPg28iitI6RRxIbdSNgxjO8b5V
