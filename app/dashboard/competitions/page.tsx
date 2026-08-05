@@ -9,7 +9,7 @@ import { columns } from "./columns";
 import { useLanguage } from "@/app/components/language-provider";
 
 export default function CompetitionsPage() {
-  const tenders = useQuery(api.tenders.getAllTenders);
+  const tenders = useQuery(api.tenders.getActiveTenders) ?? [];
   const { tr } = useLanguage();
 
   return (

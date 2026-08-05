@@ -37,7 +37,7 @@ const priorityLabels: Record<string, [string, string]> = {
 export default function TasksPage() {
   const { tr, language } = useLanguage();
   const tasks = useQuery(api.tasks.getAll, {});
-  const tenders = useQuery(api.tenders.getAllTenders) ?? [];
+  const tenders = useQuery(api.tenders.getActiveTenders) ?? [];
   const createTask = useMutation(api.tasks.create);
   const updateTask = useMutation(api.tasks.update);
   const updateStatus = useMutation(api.tasks.updateStatus);

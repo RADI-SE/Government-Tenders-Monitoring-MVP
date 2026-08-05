@@ -14,7 +14,7 @@ export default defineSchema({
     .index("by_clerkUserId", ["clerkUserId"])
     .index("by_email", ["email"]),
 
- 
+
   // ---------- Categories (replaces activities) ----------
   categories: defineTable({
     externalCategoryId: v.number(), // original activity ID
@@ -54,6 +54,8 @@ export default defineSchema({
     documents: v.optional(v.array(v.string())),
     activity_ids: v.optional(v.array(v.number())),
     raw_data: v.optional(v.any()),
+    archived: v.optional(v.boolean()),
+    archivedAt: v.optional(v.number()),
   })
     .index("by_original_id", ["id"])
     .index("by_workflow_status", ["workflow_status"])
@@ -180,7 +182,7 @@ export default defineSchema({
   })
     .index("by_region_id", ["id"]),
 
-      agencies: defineTable({
+  agencies: defineTable({
     id: v.number(),
     name: v.string(),
   }).index("by_agency_id", ["id"]),

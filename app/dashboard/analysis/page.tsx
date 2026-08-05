@@ -16,7 +16,7 @@ const list = (value: FormDataEntryValue | null) => String(value ?? "").split(/[,
 export default function AnalysisPage() {
   const { tr } = useLanguage();
   const analyses = useQuery(api.aiAnalysis.getAll, {});
-  const tenders = useQuery(api.tenders.getAllTenders) ?? [];
+  const tenders = useQuery(api.tenders.getActiveTenders) ?? [];
   const createAnalysis = useMutation(api.aiAnalysis.create);
   const updateAnalysis = useMutation(api.aiAnalysis.update);
   const removeAnalysis = useMutation(api.aiAnalysis.remove);

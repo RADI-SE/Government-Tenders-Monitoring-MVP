@@ -14,7 +14,7 @@ const fileTypes = ["pdf", "doc", "excel", "image", "zip", "other"] as const;
 export default function AttachmentsPage() {
   const { tr } = useLanguage();
   const files = useQuery(api.attachments.getAll, {});
-  const tenders = useQuery(api.tenders.getAllTenders) ?? [];
+  const tenders = useQuery(api.tenders.getActiveTenders) ?? [];
   const createFile = useMutation(api.attachments.create);
   const updateFile = useMutation(api.attachments.update);
   const removeFile = useMutation(api.attachments.remove);

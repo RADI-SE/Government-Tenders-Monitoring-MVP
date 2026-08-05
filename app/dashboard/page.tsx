@@ -10,7 +10,7 @@ import { CompetitionStatus } from "@/components/competitions/competition-status"
 
 export default function DashboardPage() {
   const { tr } = useLanguage();
-  const tenders = useQuery(api.tenders.getAllTenders) ?? [];
+  const tenders = useQuery(api.tenders.getActiveTenders) ?? [];
   const active = tenders.filter((tender) => tender.workflow_status !== "archived");
   const interested = tenders.filter((tender) => tender.workflow_status === "interested").length;
   const reviewing = tenders.filter((tender) => tender.workflow_status === "reviewing").length;
