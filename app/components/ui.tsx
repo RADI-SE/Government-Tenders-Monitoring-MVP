@@ -3,6 +3,9 @@ import type { ReactNode, CSSProperties } from "react";
 import { createContext, useContext, useState } from "react";
 import { useRouter } from "next/navigation";
 import { formatDate, deadlineLabel } from "@/app/utils/date";
+import type { Doc } from "@/convex/_generated/dataModel";
+
+type BackendTender = Doc<"tenders">;
 
 // ---------- Language Context ----------
 type Lang = "ar" | "en";
@@ -124,14 +127,14 @@ export function MetricCard({
 }
 
 // ---------- Tender Table ----------
-export function TenderTable({ tenders }: { tenders: any[] }) {
+export function TenderTable({ tenders }: { tenders: BackendTender[] }) {
   const { language, tr } = useLanguage();
   const router = useRouter();
 
   // Helpers
-  const getAgency = (tender: any) => tender.raw_data?.agency?.name || tender.agency_id || "-";
-  const getCategory = (tender: any) => tender.classification || tender.raw_data?.classification_field || "-";
-  const getScore = (tender: any) => tender.opportunity_score ?? "-";
+  const getAgency = (tender: BackendTender) => tender.raw_data?.agency?.name || tender.agency_id || "-";
+  const getCategory = (tender: BackendTender) => tender.classification || tender.raw_data?.classification_field || "-";
+  const getScore = (tender: BackendTender) => tender.opportunity_score ?? "-";
 
   return (
     <div className="overflow-x-auto bg-white rounded-xl shadow">
@@ -150,9 +153,9 @@ export function TenderTable({ tenders }: { tenders: any[] }) {
         <tbody>
           {tenders.map((tender) => (
             <tr
-              key={tender.id}
+              key={tender._id}
               className="border-b hover:bg-gray-50 cursor-pointer transition"
-              onClick={() => router.push(`/tenders/${tender.id}`)}
+              onClick={() => router.push("/dashboard/competitions")}
             >
               <td className="p-4">
                 <div className="flex items-center gap-3">

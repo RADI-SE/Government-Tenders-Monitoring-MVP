@@ -1,58 +1,59 @@
 "use client";
 
-import { ColumnDef } from "@tanstack/react-table";
-import { Competition } from "./types";
-
+import type { ColumnDef } from "@tanstack/react-table";
+import type { Competition } from "./types";
 import { CompetitionStatus } from "@/components/competitions/competition-status";
 import { CompetitionActions } from "@/components/competitions/competition-actions";
+import { LocalizedText } from "@/app/components/language-provider";
 
-const formatDate = (date: string) =>
-  new Intl.DateTimeFormat("ar-SA", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  }).format(new Date(date));
+const formatDate = (date?: string) => date
+  ? new Intl.DateTimeFormat("ar-SA", { year: "numeric", month: "short", day: "numeric" }).format(new Date(date))
+  : "—";
 
 export const columns: ColumnDef<Competition>[] = [
   {
     accessorKey: "reference_number",
-    header: "الرقم المرجعي",
+    header: () => <LocalizedText ar="الرقم المرجعي" en="Reference" />,
+    cell: ({ row }) => <span className="font-mono text-xs text-indigo-700">{row.original.reference_number}</span>,
   },
   {
     accessorKey: "tender_name",
-    header: "اسم المنافسة",
+    header: () => <LocalizedText ar="اسم المنافسة" en="Competition" />,
+    cell: ({ row }) => <div className="max-w-sm font-semibold leading-6 text-slate-900">{row.original.tender_name}</div>,
   },
   {
     id: "agency",
-    header: "الجهة",
-    accessorFn: (row) => row.raw_data.agency.name,
+    header: () => <LocalizedText ar="الجهة" en="Agency" />,
+    accessorFn: (row) => row.raw_data?.agency?.name ?? "—",
+  },
+  {
+    accessorKey: "classification",
+    header: () => <LocalizedText ar="التصنيف" en="Category" />,
+    cell: ({ row }) => <span className="rounded-lg bg-slate-100 px-2.5 py-1 text-xs">{row.original.classification ?? "—"}</span>,
   },
   {
     accessorKey: "created_at",
-    header: "تاريخ الإضافة",
+    header: () => <LocalizedText ar="تاريخ النشر" en="Published" />,
+    filterFn: (row, columnId, value: { from?: string; to?: string }) => {
+      const date = String(row.getValue(columnId)).slice(0, 10);
+      return (!value?.from || date >= value.from) && (!value?.to || date <= value.to);
+    },
     cell: ({ row }) => formatDate(row.original.created_at),
   },
   {
     accessorKey: "last_submission_date",
-    header: "آخر موعد للتقديم",
-    cell: ({ row }) => formatDate(row.original.last_submission_date),
+    header: () => <LocalizedText ar="آخر موعد" en="Deadline" />,
+    cell: ({ row }) => <span className="whitespace-nowrap font-medium">{formatDate(row.original.last_submission_date)}</span>,
   },
   {
-    accessorKey: "original_status",
-    header: "الحالة",
-    cell: ({ row }) => (
-      <CompetitionStatus
-        status={row.original.original_status}
-      />
-    ),
+    accessorKey: "workflow_status",
+    header: () => <LocalizedText ar="الحالة" en="Status" />,
+    cell: ({ row }) => <CompetitionStatus status={row.original.workflow_status} />,
   },
   {
     id: "actions",
-    header: "الإجراء",
-    cell: ({ row }) => (
-      <CompetitionActions
-        competition={row.original}
-      />
-    ),
+    header: () => <LocalizedText ar="الإجراء" en="Action" />,
+    enableGlobalFilter: false,
+    cell: ({ row }) => <CompetitionActions competition={row.original} />,
   },
 ];
