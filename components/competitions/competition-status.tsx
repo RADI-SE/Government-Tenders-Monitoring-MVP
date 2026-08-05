@@ -9,7 +9,7 @@ export function CompetitionStatus({
 }: CompetitionStatusProps) {
   return (
     <span className="inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-medium">
-      {status.name}
+      {status?.name}
     </span>
   );
 }

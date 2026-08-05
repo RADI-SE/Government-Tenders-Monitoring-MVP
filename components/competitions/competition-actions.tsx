@@ -1,6 +1,7 @@
 "use client";
 
 import { MoreHorizontal, Eye, Sparkles, Star, Paperclip } from "lucide-react";
+import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 
@@ -32,10 +33,11 @@ export function CompetitionActions({
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end">
-
-        <DropdownMenuItem>
-          <Eye className="mr-2 h-4 w-4" />
-          عرض التفاصيل
+ 
+        <DropdownMenuItem asChild>
+          <Link href={`/dashboard/competitions/${competition.id}`}>
+            عرض التفاصيل
+          </Link>
         </DropdownMenuItem>
 
         <DropdownMenuItem>
