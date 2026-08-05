@@ -2,10 +2,9 @@
 
 import { ExternalLink, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import type { Doc } from "@/convex/_generated/dataModel";
 
 interface TenderAttachmentsProps {
-  tender: Doc<"tenders">;
+  tender: any;
 }
 
 export function TenderAttachments({
@@ -21,7 +20,7 @@ export function TenderAttachments({
         </p>
       )}
 
-      {attachments.map((attachment: { id: string | number; title: string; url: string }) => (
+      {attachments.map((attachment: any) => (
         <div
           key={attachment.id}
           className="flex items-center justify-between rounded-xl border p-4"
@@ -36,13 +35,15 @@ export function TenderAttachments({
             </div>
           </div>
 
-          <Button variant="outline" render={<a
+          <Button asChild variant="outline">
+            <a
               href={attachment.url}
               target="_blank"
               rel="noopener noreferrer"
-            />}>
+            >
               <ExternalLink className="mr-2 h-4 w-4" />
               فتح
+            </a>
           </Button>
         </div>
       ))}

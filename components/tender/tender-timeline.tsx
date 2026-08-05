@@ -1,8 +1,7 @@
 "use client";
-import type { Doc } from "@/convex/_generated/dataModel";
 
 interface TenderTimelineProps {
-  tender: Doc<"tenders">;
+  tender: any;
 }
 
 export function TenderTimeline({

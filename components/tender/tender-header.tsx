@@ -13,10 +13,9 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { CompetitionStatus } from "@/components/competitions/competition-status";
-import type { Doc } from "@/convex/_generated/dataModel";
 
 interface TenderHeaderProps {
-    tender: Doc<"tenders">;
+    tender: any;
 }
 
 export function TenderHeader({
@@ -49,13 +48,15 @@ export function TenderHeader({
 
                 <div className="flex items-center gap-2">
                     {etimadLink && (
-                        <Button render={<a
+                        <Button asChild>
+                            <a
                                 href={etimadLink}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                            />}>
+                            >
                                 <ExternalLink className="mr-2 h-4 w-4" />
                                 عرض في اعتماد
+                            </a>
                         </Button>
                     )}
 
@@ -107,9 +108,9 @@ export function TenderHeader({
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                     <Calendar className="h-4 w-4" />
                     آخر موعد:
-                    {tender.last_submission_date
-                        ? new Date(tender.last_submission_date).toLocaleDateString("ar-SA")
-                        : "-"}
+                    {new Date(
+                        tender?.last_submission_date
+                    ).toLocaleDateString("ar-SA")}
                 </div>
 
             </div>

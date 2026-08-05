@@ -4,7 +4,7 @@ import { LucideIcon } from "lucide-react";
 
 interface TenderInfoCardProps {
   title: string;
-  value?: string | number;
+  value: string;
   icon: LucideIcon;
 }
 

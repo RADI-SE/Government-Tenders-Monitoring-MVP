@@ -10,10 +10,9 @@ import {
 } from "lucide-react";
 
 import { TenderInfoCard } from "./tender-info-card";
-import type { Doc } from "@/convex/_generated/dataModel";
 
 interface TenderOverviewProps {
-  tender: Doc<"tenders">;
+  tender: any;
 }
 
 export function TenderOverview({

@@ -6,10 +6,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import type { Doc } from "@/convex/_generated/dataModel";
 
 interface TenderDescriptionProps {
-  tender: Doc<"tenders">;
+  tender: any;
 }
 
 export function TenderDescription({
