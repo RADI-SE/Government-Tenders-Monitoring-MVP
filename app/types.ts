@@ -28,4 +28,5 @@ export type Tender = {
   taskCreated?: boolean;
 };
 
-export type ViewKey = "overview" | "tenders" | "deadlines" | "tasks" | "archive";
+export type ViewKey =
+  "overview" | "tenders" | "deadlines" | "tasks" | "archive";

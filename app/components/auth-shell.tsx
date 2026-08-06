@@ -8,25 +8,336 @@ import { LanguageToggle, useLanguage } from "./language-provider";
 
 export function AuthShell({ mode }: { mode: "login" | "signup" }) {
   const { tr } = useLanguage();
-  return <main className="auth-page"><header className="auth-topbar"><Link href="/" className="auth-logo"><SpiderLogo /></Link><div><Link href="/">{tr("الرئيسية", "Home")}</Link><Link href={mode === "login" ? "/signup" : "/login"}>{mode === "login" ? tr("إنشاء حساب", "Create account") : tr("تسجيل الدخول", "Sign in")}</Link><LanguageToggle /></div></header><div className="auth-layout"><AuthStory mode={mode} /><section className="auth-form-side">{mode === "login" ? <LoginForm /> : <SignupForm />}</section></div><footer className="auth-footer">© 2026 Spiders AI · {tr("منصة العرض التجريبي لمراقبة المنافسات الحكومية", "Government tenders monitoring MVP")}</footer></main>;
+  return (
+    <main className="auth-page">
+      <header className="auth-topbar">
+        <Link href="/" className="auth-logo">
+          <SpiderLogo />
+        </Link>
+        <div>
+          <Link href="/">{tr("الرئيسية", "Home")}</Link>
+          <Link href={mode === "login" ? "/signup" : "/login"}>
+            {mode === "login"
+              ? tr("إنشاء حساب", "Create account")
+              : tr("تسجيل الدخول", "Sign in")}
+          </Link>
+          <LanguageToggle />
+        </div>
+      </header>
+      <div className="auth-layout">
+        <AuthStory mode={mode} />
+        <section className="auth-form-side">
+          {mode === "login" ? <LoginForm /> : <SignupForm />}
+        </section>
+      </div>
+      <footer className="auth-footer">
+        © 2026 Spiders AI ·{" "}
+        {tr(
+          "منصة العرض التجريبي لمراقبة المنافسات الحكومية",
+          "Government tenders monitoring MVP",
+        )}
+      </footer>
+    </main>
+  );
 }
 
 function AuthStory({ mode }: { mode: "login" | "signup" }) {
   const { tr } = useLanguage();
-  return <aside className="auth-story"><div className="auth-story-web" aria-hidden="true"><svg viewBox="0 0 300 300"><g fill="none" stroke="currentColor"><path d="M150 8v284M8 150h284M50 50l200 200M250 50 50 250"/><path d="M150 38 228 72 262 150 228 228 150 262 72 228 38 150 72 72zM150 78l48 22 22 50-22 48-48 22-50-22-22-48 22-50zM150 115l24 11 11 24-11 24-24 11-24-11-11-24 11-24z"/></g></svg></div><div className="auth-story-content"><span className="auth-kicker"><Icon name="sparkles" />Spiders AI</span><h1>{mode === "login" ? tr("مرحباً بعودتك", "Welcome back") : tr("ابدأ طريقة جديدة للعمل", "Start a new way of working")}</h1><p>{mode === "login" ? tr("ادخل إلى مساحة ذكية لمراقبة وتحليل المنافسات الحكومية وتحويلها إلى فرص.", "Access one intelligent workspace to monitor, analyze, and convert government tenders into opportunities.") : tr("أنشئ حساب فريقك وابدأ بتنظيم المنافسات والمواعيد والمتابعات في مكان واحد.", "Create your team account and organize tenders, deadlines, and follow-ups in one place.")}</p><ul><li><Icon name="scan" />{tr("رصد واستيراد المنافسات", "Tender scanning and imports")}</li><li><Icon name="sparkles" />{tr("ملخصات وتصنيف ذكي", "AI summaries and classification")}</li><li><Icon name="bell" />{tr("مواعيد وتذكيرات واضحة", "Deadlines and reminders")}</li></ul><div className="auth-stats"><div><strong>40K+</strong><span>{tr("سجل قابل للرصد", "Trackable records")}</span></div><div><strong>24/7</strong><span>{tr("متابعة مستمرة", "Continuous monitoring")}</span></div><div><strong>1</strong><span>{tr("مساحة عمل موحدة", "Unified workspace")}</span></div></div></div></aside>;
+  return (
+    <aside className="auth-story">
+      <div className="auth-story-web" aria-hidden="true">
+        <svg viewBox="0 0 300 300">
+          <g fill="none" stroke="currentColor">
+            <path d="M150 8v284M8 150h284M50 50l200 200M250 50 50 250" />
+            <path d="M150 38 228 72 262 150 228 228 150 262 72 228 38 150 72 72zM150 78l48 22 22 50-22 48-48 22-50-22-22-48 22-50zM150 115l24 11 11 24-11 24-24 11-24-11-11-24 11-24z" />
+          </g>
+        </svg>
+      </div>
+      <div className="auth-story-content">
+        <span className="auth-kicker">
+          <Icon name="sparkles" />
+          Spiders AI
+        </span>
+        <h1>
+          {mode === "login"
+            ? tr("مرحباً بعودتك", "Welcome back")
+            : tr("ابدأ طريقة جديدة للعمل", "Start a new way of working")}
+        </h1>
+        <p>
+          {mode === "login"
+            ? tr(
+                "ادخل إلى مساحة ذكية لمراقبة وتحليل المنافسات الحكومية وتحويلها إلى فرص.",
+                "Access one intelligent workspace to monitor, analyze, and convert government tenders into opportunities.",
+              )
+            : tr(
+                "أنشئ حساب فريقك وابدأ بتنظيم المنافسات والمواعيد والمتابعات في مكان واحد.",
+                "Create your team account and organize tenders, deadlines, and follow-ups in one place.",
+              )}
+        </p>
+        <ul>
+          <li>
+            <Icon name="scan" />
+            {tr("رصد واستيراد المنافسات", "Tender scanning and imports")}
+          </li>
+          <li>
+            <Icon name="sparkles" />
+            {tr("ملخصات وتصنيف ذكي", "AI summaries and classification")}
+          </li>
+          <li>
+            <Icon name="bell" />
+            {tr("مواعيد وتذكيرات واضحة", "Deadlines and reminders")}
+          </li>
+        </ul>
+        <div className="auth-stats">
+          <div>
+            <strong>40K+</strong>
+            <span>{tr("سجل قابل للرصد", "Trackable records")}</span>
+          </div>
+          <div>
+            <strong>24/7</strong>
+            <span>{tr("متابعة مستمرة", "Continuous monitoring")}</span>
+          </div>
+          <div>
+            <strong>1</strong>
+            <span>{tr("مساحة عمل موحدة", "Unified workspace")}</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+  );
 }
 
 function LoginForm() {
-  const { tr } = useLanguage(); const router = useRouter(); const [showPassword, setShowPassword] = useState(false);
-  function submit(event: FormEvent) { event.preventDefault(); router.push("/"); }
-  return <AuthCard eyebrow={tr("أهلاً بك", "Welcome")} title={tr("تسجيل الدخول", "Sign in")} subtitle={tr("أدخل بياناتك للوصول إلى لوحة التحكم", "Enter your details to access the dashboard")}><form className="auth-form" onSubmit={submit}><label>{tr("البريد الإلكتروني", "Email address")}<div className="auth-input"><Icon name="user" /><input type="email" required placeholder="name@company.com" /></div></label><label>{tr("كلمة المرور", "Password")}<div className="auth-input"><Icon name="file" /><input type={showPassword ? "text" : "password"} required minLength={6} placeholder="••••••••" /><button type="button" onClick={() => setShowPassword(!showPassword)}>{showPassword ? tr("إخفاء", "Hide") : tr("إظهار", "Show")}</button></div></label><div className="auth-options"><label><input type="checkbox" />{tr("تذكرني", "Remember me")}</label><button type="button">{tr("نسيت كلمة المرور؟", "Forgot password?")}</button></div><button className="auth-submit" type="submit">{tr("تسجيل الدخول", "Sign in")}<Icon name="chevron" /></button><p className="auth-switch">{tr("ليس لديك حساب؟", "Don’t have an account?")} <Link href="/signup">{tr("أنشئ حساباً جديداً", "Create an account")}</Link></p><div className="demo-access"><Icon name="sparkles" /><span><strong>{tr("وضع العرض التجريبي", "Demo access")}</strong>{tr("أي بريد وكلمة مرور من 6 أحرف ستفتح لوحة التحكم.", "Any email and a 6-character password will open the dashboard.")}</span></div></form></AuthCard>;
+  const { tr } = useLanguage();
+  const router = useRouter();
+  const [showPassword, setShowPassword] = useState(false);
+  function submit(event: FormEvent) {
+    event.preventDefault();
+    router.push("/");
+  }
+  return (
+    <AuthCard
+      eyebrow={tr("أهلاً بك", "Welcome")}
+      title={tr("تسجيل الدخول", "Sign in")}
+      subtitle={tr(
+        "أدخل بياناتك للوصول إلى لوحة التحكم",
+        "Enter your details to access the dashboard",
+      )}
+    >
+      <form className="auth-form" onSubmit={submit}>
+        <label>
+          {tr("البريد الإلكتروني", "Email address")}
+          <div className="auth-input">
+            <Icon name="user" />
+            <input type="email" required placeholder="name@company.com" />
+          </div>
+        </label>
+        <label>
+          {tr("كلمة المرور", "Password")}
+          <div className="auth-input">
+            <Icon name="file" />
+            <input
+              type={showPassword ? "text" : "password"}
+              required
+              minLength={6}
+              placeholder="••••••••"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? tr("إخفاء", "Hide") : tr("إظهار", "Show")}
+            </button>
+          </div>
+        </label>
+        <div className="auth-options">
+          <label>
+            <input type="checkbox" />
+            {tr("تذكرني", "Remember me")}
+          </label>
+          <button type="button">
+            {tr("نسيت كلمة المرور؟", "Forgot password?")}
+          </button>
+        </div>
+        <button className="auth-submit" type="submit">
+          {tr("تسجيل الدخول", "Sign in")}
+          <Icon name="chevron" />
+        </button>
+        <p className="auth-switch">
+          {tr("ليس لديك حساب؟", "Don’t have an account?")}{" "}
+          <Link href="/signup">
+            {tr("أنشئ حساباً جديداً", "Create an account")}
+          </Link>
+        </p>
+        <div className="demo-access">
+          <Icon name="sparkles" />
+          <span>
+            <strong>{tr("وضع العرض التجريبي", "Demo access")}</strong>
+            {tr(
+              "أي بريد وكلمة مرور من 6 أحرف ستفتح لوحة التحكم.",
+              "Any email and a 6-character password will open the dashboard.",
+            )}
+          </span>
+        </div>
+      </form>
+    </AuthCard>
+  );
 }
 
 function SignupForm() {
-  const { tr } = useLanguage(); const router = useRouter(); const [plan, setPlan] = useState("team"); const [error, setError] = useState("");
-  function submit(event: FormEvent<HTMLFormElement>) { event.preventDefault(); const data = new FormData(event.currentTarget); if (data.get("password") !== data.get("confirm")) { setError(tr("كلمتا المرور غير متطابقتين", "Passwords do not match")); return; } router.push("/"); }
-  return <AuthCard eyebrow={tr("انضم إلينا", "Join us")} title={tr("إنشاء حساب جديد", "Create your account")} subtitle={tr("أكمل البيانات التالية للبدء", "Complete the details below to get started")}><form className="auth-form signup-form" onSubmit={submit}><fieldset className="plan-picker"><legend><b>1</b>{tr("اختر مساحة العمل", "Choose workspace")}</legend><div><Plan active={plan === "starter"} onClick={() => setPlan("starter")} title={tr("تجريبية", "Starter")} price={tr("مجانية", "Free")} /><Plan active={plan === "team"} onClick={() => setPlan("team")} title={tr("فريق", "Team")} price={tr("موصى بها", "Recommended")} /></div></fieldset><fieldset><legend><b>2</b>{tr("بيانات الحساب", "Account details")}</legend><div className="auth-field-grid"><label>{tr("الاسم الكامل", "Full name")}<input required name="name" /></label><label>{tr("اسم المنظمة", "Organization")}<input required name="organization" /></label><label className="wide">{tr("البريد الإلكتروني", "Email address")}<input required name="email" type="email" placeholder="name@company.com" /></label><label>{tr("كلمة المرور", "Password")}<input required name="password" type="password" minLength={6} /></label><label>{tr("تأكيد كلمة المرور", "Confirm password")}<input required name="confirm" type="password" minLength={6} /></label></div></fieldset><fieldset><legend><b>3</b>{tr("مجالات الاهتمام", "Areas of interest")}</legend><div className="interest-pills"><label><input type="checkbox" defaultChecked />{tr("تقنية المعلومات", "Information Technology")}</label><label><input type="checkbox" />{tr("البيانات والذكاء الاصطناعي", "Data & AI")}</label><label><input type="checkbox" />{tr("الأمن السيبراني", "Cybersecurity")}</label></div></fieldset>{error && <p className="form-error">{error}</p>}<label className="terms"><input required type="checkbox" />{tr("أوافق على الشروط وسياسة الخصوصية", "I agree to the terms and privacy policy")}</label><button className="auth-submit" type="submit">{tr("إنشاء الحساب", "Create account")}<Icon name="chevron" /></button><p className="auth-switch">{tr("لديك حساب بالفعل؟", "Already have an account?")} <Link href="/login">{tr("تسجيل الدخول", "Sign in")}</Link></p></form></AuthCard>;
+  const { tr } = useLanguage();
+  const router = useRouter();
+  const [plan, setPlan] = useState("team");
+  const [error, setError] = useState("");
+  function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    if (data.get("password") !== data.get("confirm")) {
+      setError(tr("كلمتا المرور غير متطابقتين", "Passwords do not match"));
+      return;
+    }
+    router.push("/");
+  }
+  return (
+    <AuthCard
+      eyebrow={tr("انضم إلينا", "Join us")}
+      title={tr("إنشاء حساب جديد", "Create your account")}
+      subtitle={tr(
+        "أكمل البيانات التالية للبدء",
+        "Complete the details below to get started",
+      )}
+    >
+      <form className="auth-form signup-form" onSubmit={submit}>
+        <fieldset className="plan-picker">
+          <legend>
+            <b>1</b>
+            {tr("اختر مساحة العمل", "Choose workspace")}
+          </legend>
+          <div>
+            <Plan
+              active={plan === "starter"}
+              onClick={() => setPlan("starter")}
+              title={tr("تجريبية", "Starter")}
+              price={tr("مجانية", "Free")}
+            />
+            <Plan
+              active={plan === "team"}
+              onClick={() => setPlan("team")}
+              title={tr("فريق", "Team")}
+              price={tr("موصى بها", "Recommended")}
+            />
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend>
+            <b>2</b>
+            {tr("بيانات الحساب", "Account details")}
+          </legend>
+          <div className="auth-field-grid">
+            <label>
+              {tr("الاسم الكامل", "Full name")}
+              <input required name="name" />
+            </label>
+            <label>
+              {tr("اسم المنظمة", "Organization")}
+              <input required name="organization" />
+            </label>
+            <label className="wide">
+              {tr("البريد الإلكتروني", "Email address")}
+              <input
+                required
+                name="email"
+                type="email"
+                placeholder="name@company.com"
+              />
+            </label>
+            <label>
+              {tr("كلمة المرور", "Password")}
+              <input required name="password" type="password" minLength={6} />
+            </label>
+            <label>
+              {tr("تأكيد كلمة المرور", "Confirm password")}
+              <input required name="confirm" type="password" minLength={6} />
+            </label>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend>
+            <b>3</b>
+            {tr("مجالات الاهتمام", "Areas of interest")}
+          </legend>
+          <div className="interest-pills">
+            <label>
+              <input type="checkbox" defaultChecked />
+              {tr("تقنية المعلومات", "Information Technology")}
+            </label>
+            <label>
+              <input type="checkbox" />
+              {tr("البيانات والذكاء الاصطناعي", "Data & AI")}
+            </label>
+            <label>
+              <input type="checkbox" />
+              {tr("الأمن السيبراني", "Cybersecurity")}
+            </label>
+          </div>
+        </fieldset>
+        {error && <p className="form-error">{error}</p>}
+        <label className="terms">
+          <input required type="checkbox" />
+          {tr(
+            "أوافق على الشروط وسياسة الخصوصية",
+            "I agree to the terms and privacy policy",
+          )}
+        </label>
+        <button className="auth-submit" type="submit">
+          {tr("إنشاء الحساب", "Create account")}
+          <Icon name="chevron" />
+        </button>
+        <p className="auth-switch">
+          {tr("لديك حساب بالفعل؟", "Already have an account?")}{" "}
+          <Link href="/login">{tr("تسجيل الدخول", "Sign in")}</Link>
+        </p>
+      </form>
+    </AuthCard>
+  );
 }
 
-function AuthCard({ eyebrow, title, subtitle, children }: { eyebrow: string; title: string; subtitle: string; children: ReactNode }) { return <div className="auth-card"><span className="auth-card-eyebrow">{eyebrow}</span><h2>{title}</h2><p>{subtitle}</p>{children}</div>; }
-function Plan({ active, onClick, title, price }: { active: boolean; onClick: () => void; title: string; price: string }) { return <button className={active ? "active" : ""} type="button" onClick={onClick}><span>{active && <Icon name="check" />}</span><strong>{title}</strong><small>{price}</small></button>; }
+function AuthCard({
+  eyebrow,
+  title,
+  subtitle,
+  children,
+}: {
+  eyebrow: string;
+  title: string;
+  subtitle: string;
+  children: ReactNode;
+}) {
+  return (
+    <div className="auth-card">
+      <span className="auth-card-eyebrow">{eyebrow}</span>
+      <h2>{title}</h2>
+      <p>{subtitle}</p>
+      {children}
+    </div>
+  );
+}
+function Plan({
+  active,
+  onClick,
+  title,
+  price,
+}: {
+  active: boolean;
+  onClick: () => void;
+  title: string;
+  price: string;
+}) {
+  return (
+    <button className={active ? "active" : ""} type="button" onClick={onClick}>
+      <span>{active && <Icon name="check" />}</span>
+      <strong>{title}</strong>
+      <small>{price}</small>
+    </button>
+  );
+}

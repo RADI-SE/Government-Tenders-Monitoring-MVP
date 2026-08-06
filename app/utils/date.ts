@@ -1,5 +1,8 @@
 // app/utils/date.ts
-export function formatDate(date: string | null | undefined, language: "ar" | "en" = "ar") {
+export function formatDate(
+  date: string | null | undefined,
+  language: "ar" | "en" = "ar",
+) {
   if (!date) return "-";
   try {
     return new Intl.DateTimeFormat(language === "ar" ? "ar-SA" : "en-GB", {
@@ -12,11 +15,16 @@ export function formatDate(date: string | null | undefined, language: "ar" | "en
   }
 }
 
-export function deadlineLabel(date: string | null | undefined, language: "ar" | "en" = "ar") {
+export function deadlineLabel(
+  date: string | null | undefined,
+  language: "ar" | "en" = "ar",
+) {
   if (!date) return "-";
   const now = new Date();
   const deadline = new Date(date);
-  const diffDays = Math.ceil((deadline.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+  const diffDays = Math.ceil(
+    (deadline.getTime() - now.getTime()) / (1000 * 60 * 60 * 24),
+  );
 
   if (language === "en") {
     if (diffDays < 0) return "Deadline passed";

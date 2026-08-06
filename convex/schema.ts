@@ -2,7 +2,7 @@ import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 
 export default defineSchema({
-  // ---------- Users ----------
+
   users: defineTable({
     clerkUserId: v.string(),
     fullName: v.string(),
@@ -14,8 +14,7 @@ export default defineSchema({
     .index("by_clerkUserId", ["clerkUserId"])
     .index("by_email", ["email"]),
 
-
-  // ---------- Categories (replaces activities) ----------
+ 
   categories: defineTable({
     externalCategoryId: v.number(), // original activity ID
     name: v.string(),
@@ -24,8 +23,7 @@ export default defineSchema({
   })
     .index("by_externalCategoryId", ["externalCategoryId"])
     .index("by_name", ["name"]),
-
-  // ---------- Tenders ----------
+ 
   tenders: defineTable({
     id: v.number(),
     reference_number: v.string(),
@@ -63,8 +61,7 @@ export default defineSchema({
     .index("by_region_id", ["region_id"])          // ← NEW
     .index("by_activity_ids", ["activity_ids"])    // ← NEW
     .searchIndex("by_tender_name", { searchField: "tender_name" }),
-
-  // ---------- Attachments ----------
+ 
   attachments: defineTable({
     tenderId: v.id("tenders"),
     title: v.string(),
@@ -81,8 +78,7 @@ export default defineSchema({
   })
     .index("by_tender", ["tenderId"])
     .index("by_type", ["type"]),
-
-  // ---------- AI Analysis ----------
+ 
   aiAnalysis: defineTable({
     tenderId: v.id("tenders"),
     summary: v.string(),
@@ -107,8 +103,7 @@ export default defineSchema({
     analyzedAt: v.number(),
   })
     .index("by_tender", ["tenderId"]),
-
-  // ---------- Tasks ----------
+ 
   tasks: defineTable({
     tenderId: v.id("tenders"),
     title: v.string(),
@@ -135,8 +130,7 @@ export default defineSchema({
     .index("by_status", ["status"])
     .index("by_assignedTo", ["assignedTo"])
     .index("by_dueDate", ["dueDate"]),
-
-  // ---------- Reminders ----------
+ 
   reminders: defineTable({
     tenderId: v.id("tenders"),
     title: v.string(),
@@ -152,8 +146,7 @@ export default defineSchema({
     .index("by_tender", ["tenderId"])
     .index("by_remindAt", ["remindAt"])
     .index("by_isSent", ["isSent"]),
-
-  // ---------- Import Jobs ----------
+ 
   importJobs: defineTable({
     source: v.union(v.literal("etimad"), v.literal("csv"), v.literal("manual")),
     status: v.union(
@@ -174,8 +167,7 @@ export default defineSchema({
     .index("by_status", ["status"])
     .index("by_startedAt", ["startedAt"])
     .index("by_source", ["source"]),
-
-  // ---------- Regions (master) ----------
+ 
   regions: defineTable({
     id: v.number(),
     name: v.string(),

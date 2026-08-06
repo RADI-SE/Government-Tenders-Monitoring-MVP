@@ -8,17 +8,14 @@ interface TenderTabsProps {
 }
 
 const tabs = [
-  { id: "overview", label: "نظرة عامة" },
-  { id: "description", label: "الوصف" },
-  { id: "attachments", label: "المرفقات" },
-  { id: "timeline", label: "الجدول الزمني" },
-  { id: "ai", label: "تحليل الذكاء الاصطناعي" },
+  { id: "basic", label: "المعلومات الأساسية" },
+  { id: "dates", label: "العناوين والمواعيد" },
+  { id: "classification", label: "التصنيف والتقديم" },
+  { id: "awarding", label: "نتائج الترسية" },
+  { id: "ai", label: "التحليلات والتوقعات" },
 ];
 
-export function TenderTabs({
-  activeTab,
-  onChange,
-}: TenderTabsProps) {
+export function TenderTabs({ activeTab, onChange }: TenderTabsProps) {
   return (
     <div className="overflow-x-auto rounded-xl border bg-background p-2">
       <div className="flex gap-2">
@@ -30,7 +27,7 @@ export function TenderTabs({
               "rounded-lg px-4 py-2 text-sm font-medium transition-colors whitespace-nowrap",
               activeTab === tab.id
                 ? "bg-primary text-primary-foreground"
-                : "hover:bg-muted"
+                : "hover:bg-muted",
             )}
           >
             {tab.label}

@@ -1,120 +1,46 @@
 "use client";
 
-import Link from "next/link";
-import {
-    ArrowLeft,
-    Building2,
-    Calendar,
-    MapPin,
-    Share2,
-    Star,
-    ExternalLink
-} from "lucide-react";
-
-import { Button } from "@/components/ui/button";
-import { CompetitionStatus } from "@/components/competitions/competition-status";
+import { ExternalLink } from "lucide-react";
 
 interface TenderHeaderProps {
-    tender: any;
+  tender: any;
 }
 
-export function TenderHeader({
-    tender,
-}: TenderHeaderProps) {
-    const raw = tender?.raw_data;
+export function TenderHeader({ tender }: TenderHeaderProps) {
+  const raw = tender?.raw_data;
 
-    const etimadId = raw?.etimad_id;
+  const title = tender?.tender_name || "بدون عنوان";
+  const reference = tender?.reference_number || "غير محدد";
+  const status = tender?.status || tender?.original_status || "غير معروف";
+  const agency = raw?.agency?.name || "غير محدد";
 
-    const etimadLink = etimadId
-        ? `https://tenders.etimad.sa/Tender/DetailsForVisitor?STenderId=${encodeURIComponent(
-            etimadId
-        )}`
-        : null;
-    return (
-        <div className="space-y-6 rounded-xl border bg-background p-6">
+  return (
+    <div className="td-header-card rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="d-flex justify-content-between align-items-center flex-wrap">
+        <h3 className="text-xl font-bold text-slate-800">{title}</h3>
+        <span className="td-status-badge inline-block rounded-full bg-indigo-100 px-3 py-1 text-xs font-semibold text-indigo-700">
+          {status}
+        </span>
+      </div>
 
-            {/* Top Row */}
+      <div className="mt-2 opacity-75 text-sm text-slate-600">
+        <small>
+          الرقم المرجعي: {reference} | الجهة: {agency}
+        </small>
+      </div>
 
-            <div className="flex items-center justify-between">
-
-                <Link href="/dashboard/competitions">
-                    <Button variant="outline">
-                        <ArrowLeft className="mr-2 h-4 w-4" />
-                        العودة
-                    </Button>
-                </Link>
-
-
-
-                <div className="flex items-center gap-2">
-                    {etimadLink && (
-                        <Button asChild>
-                            <a
-                                href={etimadLink}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                                <ExternalLink className="mr-2 h-4 w-4" />
-                                عرض في اعتماد
-                            </a>
-                        </Button>
-                    )}
-
-                    <Button variant="outline">
-                        <Star className="mr-2 h-4 w-4" />
-                        حفظ
-                    </Button>
-
-                    <Button variant="outline">
-                        <Share2 className="mr-2 h-4 w-4" />
-                        مشاركة
-                    </Button>
-                </div>
-
-            </div>
-
-            {/* Title */}
-
-            <div className="space-y-2">
-
-                <h1 className="text-3xl font-bold">
-                    {tender?.tender_name}
-                </h1>
-
-                <p className="text-muted-foreground">
-                    الرقم المرجعي: {tender?.reference_number}
-                </p>
-
-            </div>
-
-            {/* Info */}
-
-            <div className="flex flex-wrap gap-6">
-
-                <CompetitionStatus
-                    status={tender?.original_status}
-                />
-
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Building2 className="h-4 w-4" />
-                    {raw?.agency?.name}
-                </div>
-
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <MapPin className="h-4 w-4" />
-                    {raw?.execution_locations?.[0]?.region?.name}
-                </div>
-
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Calendar className="h-4 w-4" />
-                    آخر موعد:
-                    {new Date(
-                        tender?.last_submission_date
-                    ).toLocaleDateString("ar-SA")}
-                </div>
-
-            </div>
-
-        </div>
-    );
+      <div className="mt-3 d-flex gap-2 flex-wrap">
+        <button
+          type="button"
+          className="etm-btn etm-btn--ghost inline-flex items-center gap-1 rounded-lg border border-indigo-200 bg-indigo-50 px-4 py-2 text-sm font-semibold text-indigo-700 hover:bg-indigo-100"
+          id="customProposalBtn"
+          data-bs-toggle="modal"
+          data-bs-target="#customProposalModal"
+        >
+          <ExternalLink className="h-4 w-4 ms-1" />
+          طلب إنشاء عرض مخصص
+        </button>
+      </div>
+    </div>
+  );
 }

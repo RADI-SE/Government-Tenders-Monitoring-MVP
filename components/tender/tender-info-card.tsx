@@ -20,14 +20,10 @@ export function TenderInfoCard({
           <Icon className="h-5 w-5 text-primary" />
         </div>
 
-        <span className="text-sm text-muted-foreground">
-          {title}
-        </span>
+        <span className="text-sm text-muted-foreground">{title}</span>
       </div>
 
-      <p className="text-lg font-semibold break-words">
-        {value || "-"}
-      </p>
+      <p className="text-lg font-semibold break-words">{value || "-"}</p>
     </div>
   );
 }
