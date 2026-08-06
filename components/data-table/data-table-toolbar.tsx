@@ -86,8 +86,7 @@ export function DataTableToolbar<TData>({
           />
         </label>
       </div>
-
-      {/* Filter dropdowns – 4 columns */}
+ 
       <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
         <FilterSelect
           label={tr("المنطقة", "Region")}
