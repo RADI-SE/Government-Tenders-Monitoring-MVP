@@ -127,7 +127,7 @@ export function DataTableToolbar<TData>({
             ""
           }
           onChange={(value) => setValue("workflow_status", value)}
-          options={toOptions(statuses)}
+          options={(statuses ?? []).map((item) => [item.id, item.name])}
           all={tr("كل الحالات", "All statuses")}
           className={control}
           loading={isLoading}

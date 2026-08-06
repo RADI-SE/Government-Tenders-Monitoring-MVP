@@ -1,4 +1,5 @@
 "use client";
+
 import { useQuery } from "convex/react";
 import { Archive } from "lucide-react";
 import { api } from "@/convex/_generated/api";
@@ -7,25 +8,8 @@ import { ResourcePage } from "@/components/dashboard/resource-page";
 import { columns } from "../competitions/columns";
 
 export default function ArchivePage() {
-  const tenders = useQuery(api.tenders.getActiveTenders) ?? [];
-  const archived =
-    tenders?.filter((tender) => tender.workflow_status === "archived") ?? [];
-  return (
-    <ResourcePage
-      eyebrow="HISTORICAL RECORDS"
-      title="أرشيف المنافسات"
-      titleEn="Competition archive"
-      subtitle="Archived opportunities kept for reference and search."
-      subtitleAr="المنافسات المحفوظة للبحث والرجوع إليها لاحقاً."
-      icon={Archive}
-    >
-      {tenders === undefined ? (
-        <div className="rounded-2xl bg-white p-12 text-center text-slate-500">
-          Loading...
-        </div>
-      ) : (
-        <DataTable columns={columns} data={archived} />
-      )}
-    </ResourcePage>
-  );
+  const tenders = useQuery(api.tenders.getArchivedTenders);
+  return <ResourcePage eyebrow="HISTORICAL RECORDS" title="أرشيف المنافسات" titleEn="Competition archive" subtitle="Archived opportunities kept for reference and search." subtitleAr="المنافسات المحفوظة للبحث والرجوع إليها لاحقاً." icon={Archive}>
+    {tenders === undefined ? <div className="rounded-2xl bg-white p-12 text-center text-slate-500">Loading...</div> : <DataTable columns={columns} data={tenders} />}
+  </ResourcePage>;
 }

@@ -9,6 +9,7 @@ import {
   ResourceEmpty,
   ResourcePage,
 } from "@/components/dashboard/resource-page";
+import { LatestImportSummary } from "@/components/dashboard/latest-import-summary";
 
 const mockResults = [
   "Cloud infrastructure operations",
@@ -59,6 +60,7 @@ export default function ImportsPage() {
       subtitleAr="سجل عمليات الاستيراد التجريبية وملفات CSV والإدخال اليدوي."
       icon={History}
     >
+      <LatestImportSummary />
       <section className="rounded-2xl border border-indigo-100 bg-gradient-to-l from-indigo-50 to-emerald-50 p-5">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>

@@ -7,10 +7,12 @@ import { api } from "@/convex/_generated/api";
 import { useLanguage } from "@/app/components/language-provider";
 import { MetricCard } from "@/components/dashboard/metric-card";
 import { CompetitionStatus } from "@/components/competitions/competition-status";
+import { UpcomingDeadlines } from "@/components/dashboard/upcoming-deadlines";
 
 export default function DashboardPage() {
   const { tr } = useLanguage();
   const tenders = useQuery(api.tenders.getActiveTenders) ?? [];
+  const archivedTenders = useQuery(api.tenders.getArchivedTenders) ?? [];
   const active = tenders.filter(
     (tender) => tender.workflow_status !== "archived",
   );
@@ -19,9 +21,6 @@ export default function DashboardPage() {
   ).length;
   const reviewing = tenders.filter(
     (tender) => tender.workflow_status === "reviewing",
-  ).length;
-  const archived = tenders.filter(
-    (tender) => tender.workflow_status === "archived",
   ).length;
 
   return (
@@ -81,11 +80,12 @@ export default function DashboardPage() {
         <MetricCard
           title={tr("الأرشيف", "Archive")}
           subtitle={tr("سجلات محفوظة", "Saved records")}
-          value={archived}
+          value={archivedTenders.length}
           icon={Archive}
           tone="cyan"
         />
       </div>
+      <UpcomingDeadlines />
       <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
         <header className="flex items-center justify-between border-b border-slate-100 p-5">
           <div>
