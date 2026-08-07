@@ -3,11 +3,8 @@
 import * as React from "react";
 import {
   type ColumnDef,
-  type ColumnFiltersState,
   flexRender,
   getCoreRowModel,
-  getFacetedRowModel,
-  getFilteredRowModel,
   getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
@@ -45,19 +42,17 @@ export function DataTable<TData, TValue>({
     pageIndex: 0,
     pageSize: 10,
   });
-   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    [],
-  );
+
+  React.useEffect(() => {
+    setPagination((current) => ({ ...current, pageIndex: 0 }));
+  }, [data]);
+
   const table = useReactTable({
     data,
     columns,
-    state: { pagination,columnFilters },
+    state: { pagination },
     onPaginationChange: setPagination,
- 
-    onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    getFacetedRowModel: getFacetedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     initialState: {
       columnVisibility: {
@@ -74,8 +69,7 @@ export function DataTable<TData, TValue>({
     <div className="space-y-5">
 
       <DataTableToolbar
-        table={table}
-        totalRows={table.getCoreRowModel().rows.length}
+        totalRows={totalRows ?? data.length}
         isArchived={isArchived}
         onSearch={onSearch}
       />
