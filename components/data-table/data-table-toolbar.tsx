@@ -5,7 +5,12 @@ import type { Table } from "@tanstack/react-table";
 import { useLanguage } from "@/app/components/language-provider";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+
+type LookupOption = {
+  id: number | string;
+  name: string;
+};
 
 export function DataTableToolbar({
   table,
@@ -29,14 +34,21 @@ export function DataTableToolbar({
   const statuses = useQuery(api.queries.getAllStatuses);
 
   const [searchUntil, setsearchUntil] = useState("");
+  const dateSearchTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [searchValue, setSearchValue] = useState(
     (table.getState().globalFilter as string) ?? ""
   );
 
+  useEffect(() => {
+    return () => {
+      if (dateSearchTimer.current) clearTimeout(dateSearchTimer.current);
+    };
+  }, []);
 
-  const toOptions = (items: any[] = []) =>
-    items.map((item) => [item.name, item.name] as [string, string]);
+
+  const toOptions = (items: LookupOption[] = []) =>
+    items.map((item) => [String(item.id), item.name] as [string, string]);
 
   const hasFilters =
     Boolean(searchValue) ||
@@ -56,6 +68,7 @@ export function DataTableToolbar({
   };
 
   const clearAll = () => {
+    if (dateSearchTimer.current) clearTimeout(dateSearchTimer.current);
     setSearchValue("");
     setsearchUntil("");
 
@@ -118,8 +131,12 @@ export function DataTableToolbar({
                 }
               }}
               placeholder={tr(
-                "ابحث بالعنوان، الرقم، الجهة، الوصف أو كلمة مفتاحية...",
-                "Search title, reference, agency, description, or keyword..."
+                isArchived
+                  ? "ابحث بالعنوان أو الرقم المرجعي أو الوصف..."
+                  : "ابحث باسم المنافسة...",
+                isArchived
+                  ? "Search title, reference, or description..."
+                  : "Search by competition name..."
               )}
               className={`${control} w-full bg-slate-50 pe-3 ps-10 focus:bg-white`}
             />
@@ -156,7 +173,7 @@ export function DataTableToolbar({
           <div className="grid gap-4 md:grid-cols-2">
             <div>
               <label className="mb-2 block text-xs font-medium text-slate-500">
-                {tr("إلى", "searchUntil")}
+                {tr("حتى (يشمل الأشهر الثلاثة السابقة)", "Until (includes previous 3 months)")}
               </label>
               <input
                 type="date"
@@ -165,10 +182,16 @@ export function DataTableToolbar({
                   const value = e.target.value;
                   setsearchUntil(value);
 
-                  onSearch?.({
-                    search: searchValue,
-                    searchUntil: value,
-                  });
+                  if (dateSearchTimer.current) {
+                    clearTimeout(dateSearchTimer.current);
+                  }
+
+                  dateSearchTimer.current = setTimeout(() => {
+                    onSearch?.({
+                      search: searchValue,
+                      searchUntil: value,
+                    });
+                  }, 700);
                 }}
                 className={`${control} w-full`}
               />

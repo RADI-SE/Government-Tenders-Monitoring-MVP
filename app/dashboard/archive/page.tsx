@@ -7,7 +7,7 @@ import { DataTable } from "@/components/data-table/data-table";
 import { ResourcePage } from "@/components/dashboard/resource-page";
 import { columns } from "../competitions/columns";
 import type { Competition } from "../competitions/types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function ArchivePage() {
 
@@ -20,7 +20,14 @@ export default function ArchivePage() {
     searchUntil: filters.searchUntil || undefined,
     search: filters.search || undefined,
   });
-  console.log("archived", archived);
+  const [displayedTenders, setDisplayedTenders] = useState<Competition[]>([]);
+
+  useEffect(() => {
+    if (archived !== undefined) {
+      setDisplayedTenders(archived as unknown as Competition[]);
+    }
+  }, [archived]);
+
   return (
     <ResourcePage
       eyebrow="HISTORICAL RECORDS"
@@ -30,18 +37,12 @@ export default function ArchivePage() {
       subtitleAr="المنافسات المحفوظة للبحث والرجوع إليها لاحقاً."
       icon={Archive}
     >
-      {archived === undefined ? (
-        <div className="rounded-2xl bg-white p-12 text-center text-slate-500">
-          Loading...
-        </div>
-      ) : (
-
-        <DataTable
-          columns={columns}
-          data={archived as unknown as Competition[]}
-          isArchived
-          onSearch={setFilters}
-        />)}
+      <DataTable
+        columns={columns}
+        data={displayedTenders}
+        isArchived
+        onSearch={setFilters}
+      />
     </ResourcePage>
   );
 }
