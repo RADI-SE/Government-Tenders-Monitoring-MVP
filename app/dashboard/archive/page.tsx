@@ -14,6 +14,10 @@ export default function ArchivePage() {
   const [filters, setFilters] = useState({
     search: "",
     searchUntil: "",
+    regionId: "",
+    agencyId: "",
+    activityId: "",
+    status: "",
   });
 
   const archived = useQuery(api.ArchivedTenders.getArchivedTenders, {

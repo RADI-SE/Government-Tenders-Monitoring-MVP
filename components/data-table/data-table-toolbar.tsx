@@ -6,6 +6,7 @@ import { useLanguage } from "@/app/components/language-provider";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useEffect, useRef, useState } from "react";
+import type { DataTableFilters } from "./data-table";
 
 type LookupOption = {
   id: number | string;
@@ -21,10 +22,7 @@ export function DataTableToolbar({
   table: Table<any>;
   totalRows: number;
   isArchived?: boolean;
-  onSearch?: (filters: {
-    search: string;
-    searchUntil: string;
-  }) => void;
+  onSearch?: (filters: DataTableFilters) => void;
 }) {
   const { tr } = useLanguage();
 
@@ -34,6 +32,10 @@ export function DataTableToolbar({
   const statuses = useQuery(api.queries.getAllStatuses);
 
   const [searchUntil, setsearchUntil] = useState("");
+  const [regionId, setRegionId] = useState("");
+  const [agencyId, setAgencyId] = useState("");
+  const [activityId, setActivityId] = useState("");
+  const [status, setStatus] = useState("");
   const dateSearchTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [searchValue, setSearchValue] = useState(
@@ -53,6 +55,10 @@ export function DataTableToolbar({
   const hasFilters =
     Boolean(searchValue) ||
     Boolean(searchUntil) ||
+    Boolean(regionId) ||
+    Boolean(agencyId) ||
+    Boolean(activityId) ||
+    Boolean(status) ||
     table.getState().columnFilters.length > 0;
   const control =
     "h-11 min-w-0 rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-700 outline-none focus:border-indigo-400 focus:ring-4 focus:ring-indigo-50";
@@ -60,10 +66,15 @@ export function DataTableToolbar({
   const setValue = (column: string, value: string) =>
     table.getColumn(column)?.setFilterValue(value || undefined);
 
-  const applySearch = () => {
+  const applySearch = (overrides: Partial<DataTableFilters> = {}) => {
     onSearch?.({
       search: searchValue,
       searchUntil,
+      regionId,
+      agencyId,
+      activityId,
+      status,
+      ...overrides,
     });
   };
 
@@ -71,12 +82,20 @@ export function DataTableToolbar({
     if (dateSearchTimer.current) clearTimeout(dateSearchTimer.current);
     setSearchValue("");
     setsearchUntil("");
+    setRegionId("");
+    setAgencyId("");
+    setActivityId("");
+    setStatus("");
 
     table.resetColumnFilters();
 
     onSearch?.({
       search: "",
       searchUntil: "",
+      regionId: "",
+      agencyId: "",
+      activityId: "",
+      status: "",
     });
   };
 
@@ -145,7 +164,7 @@ export function DataTableToolbar({
           {/* Search */}
           <button
             type="button"
-            onClick={applySearch}
+            onClick={() => applySearch()}
             className="flex h-11 items-center gap-2 rounded-xl bg-indigo-600 px-4 text-sm font-medium text-white transition hover:bg-indigo-700 focus:ring-4 focus:ring-indigo-200"
           >
             <Search className="h-4 w-4" />
@@ -190,6 +209,10 @@ export function DataTableToolbar({
                     onSearch?.({
                       search: searchValue,
                       searchUntil: value,
+                      regionId,
+                      agencyId,
+                      activityId,
+                      status,
                     });
                   }, 700);
                 }}
@@ -209,8 +232,12 @@ export function DataTableToolbar({
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           <FilterSelect
             label={tr("المنطقة", "Region")}
-            value={(table.getColumn("region")?.getFilterValue() as string) ?? ""}
-            onChange={(value) => setValue("region", value)}
+            value={regionId}
+            onChange={(value) => {
+              setRegionId(value);
+              setValue("region", value);
+              if (!isArchived) applySearch({ regionId: value });
+            }}
             options={toOptions(regions)}
             all={tr("جميع المناطق", "All regions")}
             className={control}
@@ -219,8 +246,12 @@ export function DataTableToolbar({
 
           <FilterSelect
             label={tr("الجهة", "Agency")}
-            value={(table.getColumn("agency")?.getFilterValue() as string) ?? ""}
-            onChange={(value) => setValue("agency", value)}
+            value={agencyId}
+            onChange={(value) => {
+              setAgencyId(value);
+              setValue("agency", value);
+              if (!isArchived) applySearch({ agencyId: value });
+            }}
             options={toOptions(agencies)}
             all={tr("جميع الجهات", "All agencies")}
             className={control}
@@ -229,8 +260,12 @@ export function DataTableToolbar({
 
           <FilterSelect
             label={tr("النشاط / القطاع", "Activity / Sector")}
-            value={(table.getColumn("activity")?.getFilterValue() as string) ?? ""}
-            onChange={(value) => setValue("activity", value)}
+            value={activityId}
+            onChange={(value) => {
+              setActivityId(value);
+              setValue("activity", value);
+              if (!isArchived) applySearch({ activityId: value });
+            }}
             options={toOptions(activities)}
             all={tr("جميع الأنشطة", "All activities")}
             className={control}
@@ -239,10 +274,12 @@ export function DataTableToolbar({
 
           <FilterSelect
             label={tr("الحالة", "Status")}
-            value={
-              (table.getColumn("original_status")?.getFilterValue() as string) ?? ""
-            }
-            onChange={(value) => setValue("original_status", value)}
+            value={status}
+            onChange={(value) => {
+              setStatus(value);
+              setValue("original_status", value);
+              if (!isArchived) applySearch({ status: value });
+            }}
             options={(statuses ?? []).map((item) => [item.name, item.name])}
             all={tr("كل الحالات", "All statuses")}
             className={control}

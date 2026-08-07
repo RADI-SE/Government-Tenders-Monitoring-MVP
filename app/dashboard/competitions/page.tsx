@@ -6,17 +6,83 @@ import Link from "next/link";
 import { BrainCircuit, FileSearch, FolderOpen, Paperclip } from "lucide-react";
 import { api } from "@/convex/_generated/api";
 import { DataTable } from "@/components/data-table/data-table";
+import type { DataTableFilters } from "@/components/data-table/data-table";
 import { columns } from "./columns";
 import { useLanguage } from "@/app/components/language-provider";
  
 export default function CompetitionsPage() {
-  const [search, setSearch] = useState("");
+  const [filters, setFilters] = useState<DataTableFilters>({
+    search: "",
+    searchUntil: "",
+    regionId: "",
+    agencyId: "",
+    activityId: "",
+    status: "",
+  });
   const activeTenders = useQuery(api.tenders.getActiveTenders);
   const searchResults = useQuery(
     api.queries.searchTenders,
-    search ? { query: search } : "skip",
+    filters.search ? { query: filters.search } : "skip",
   );
-  const tenders = search ? searchResults : activeTenders;
+  const agencyResults = useQuery(
+    api.queries.getTendersByAgency,
+    filters.agencyId && !filters.status
+      ? { agencyId: Number(filters.agencyId) }
+      : "skip",
+  );
+  const agencyStatusResults = useQuery(
+    api.queries.getTendersByAgencyAndStatus,
+    filters.agencyId && filters.status
+      ? { agencyId: Number(filters.agencyId), status: filters.status }
+      : "skip",
+  );
+  const regionResults = useQuery(
+    api.queries.getTendersByRegion,
+    filters.regionId ? { regionId: Number(filters.regionId) } : "skip",
+  );
+  const activityResults = useQuery(
+    api.queries.getTendersByActivity,
+    filters.activityId ? { activityId: Number(filters.activityId) } : "skip",
+  );
+
+  const requestedResults = [
+    filters.search ? searchResults : undefined,
+    filters.agencyId
+      ? filters.status
+        ? agencyStatusResults
+        : agencyResults
+      : undefined,
+    filters.regionId ? regionResults : undefined,
+    filters.activityId ? activityResults : undefined,
+  ];
+  const hasBackendFilters = Boolean(
+    filters.search || filters.agencyId || filters.regionId || filters.activityId,
+  );
+  const isBackendLoading = hasBackendFilters && requestedResults.some(
+    (result, index) => {
+      const isRequested = [
+        Boolean(filters.search),
+        Boolean(filters.agencyId),
+        Boolean(filters.regionId),
+        Boolean(filters.activityId),
+      ][index];
+      return isRequested && result === undefined;
+    },
+  );
+  const completedResults = requestedResults.filter(
+    (result): result is NonNullable<typeof result> => result !== undefined,
+  );
+  const tenders = isBackendLoading
+    ? undefined
+    : hasBackendFilters
+      ? completedResults.reduce(
+          (matches, result) => {
+            const ids = new Set(result.map((tender) => tender.id));
+            return matches.filter((tender) => ids.has(tender.id));
+          },
+          completedResults[0] ?? [],
+        )
+      : activeTenders;
   const { tr } = useLanguage();
 
   return (
@@ -80,7 +146,9 @@ export default function CompetitionsPage() {
         <DataTable
           columns={columns}
           data={tenders}
-          onSearch={({ search: nextSearch }) => setSearch(nextSearch.trim())}
+          onSearch={(nextFilters) =>
+            setFilters({ ...nextFilters, search: nextFilters.search.trim() })
+          }
         />
       )}
     </div>

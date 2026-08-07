@@ -20,11 +20,17 @@ export interface DataTableProps<TData, TValue> {
   data: TData[];
   totalRows?: number;
   isArchived?: boolean;
-  onSearch?: (filters: {
-    search: string;
-    searchUntil: string;
-   }) => void;
+  onSearch?: (filters: DataTableFilters) => void;
 }
+
+export type DataTableFilters = {
+  search: string;
+  searchUntil: string;
+  regionId: string;
+  agencyId: string;
+  activityId: string;
+  status: string;
+};
 
 
 export function DataTable<TData, TValue>({
