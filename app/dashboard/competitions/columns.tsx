@@ -50,6 +50,8 @@ export const columns: ColumnDef<Competition>[] = [
     accessorFn: (row) =>
       row.raw_data?.agency?.name ??
       (row.agency_id ? String(row.agency_id) : "—"),
+    filterFn: (row, _id, value: string) =>
+      !value || String(row.original.agency_id ?? "") === value,
   },
   {
     accessorKey: "created_at",
@@ -83,6 +85,8 @@ export const columns: ColumnDef<Competition>[] = [
     accessorFn: (row) =>
       row.raw_data?.execution_locations?.[0]?.region?.name ??
       (row.region_id ? String(row.region_id) : ""),
+    filterFn: (row, _id, value: string) =>
+      !value || String(row.original.region_id ?? "") === value,
   },
   {
     id: "activity",
@@ -93,6 +97,8 @@ export const columns: ColumnDef<Competition>[] = [
         .join("، ") ||
       row.activity_ids?.join(", ") ||
       "",
+    filterFn: (row, _id, value: string) =>
+      !value || row.original.activity_ids?.some((id) => String(id) === value) === true,
   },
   {
     id: "tender_type",

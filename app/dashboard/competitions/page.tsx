@@ -1,7 +1,7 @@
 "use client";
 
-import { useQuery, useMutation } from "convex/react";
-import { useEffect, useRef } from "react";
+import { useQuery } from "convex/react";
+import { useState } from "react";
 import Link from "next/link";
 import { BrainCircuit, FileSearch, FolderOpen, Paperclip } from "lucide-react";
 import { api } from "@/convex/_generated/api";
@@ -10,10 +10,13 @@ import { columns } from "./columns";
 import { useLanguage } from "@/app/components/language-provider";
  
 export default function CompetitionsPage() {
-
-
-  const tenders = useQuery(api.tenders.getActiveTenders) ?? [];
-  console.log("tenders", tenders);
+  const [search, setSearch] = useState("");
+  const activeTenders = useQuery(api.tenders.getActiveTenders);
+  const searchResults = useQuery(
+    api.queries.searchTenders,
+    search ? { query: search } : "skip",
+  );
+  const tenders = search ? searchResults : activeTenders;
   const { tr } = useLanguage();
 
   return (
@@ -74,7 +77,11 @@ export default function CompetitionsPage() {
           </div>
         </div>
       ) : (
-        <DataTable columns={columns} data={tenders} />
+        <DataTable
+          columns={columns}
+          data={tenders}
+          onSearch={({ search: nextSearch }) => setSearch(nextSearch.trim())}
+        />
       )}
     </div>
   );
