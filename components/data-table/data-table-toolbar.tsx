@@ -5,40 +5,76 @@ import type { Table } from "@tanstack/react-table";
 import { useLanguage } from "@/app/components/language-provider";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { useState } from "react";
 
-export function DataTableToolbar<TData>({
+export function DataTableToolbar({
   table,
   totalRows,
+  isArchived = false,
+  onSearch,
 }: {
-  table: Table<TData>;
+  table: Table<any>;
   totalRows: number;
+  isArchived?: boolean;
+  onSearch?: (filters: {
+    search: string;
+    searchUntil: string;
+  }) => void;
 }) {
   const { tr } = useLanguage();
 
-  // Fetch filter options from Convex
   const regions = useQuery(api.queries.getAllRegions);
   const agencies = useQuery(api.queries.getAllAgencies);
   const activities = useQuery(api.queries.getAllActivities);
   const statuses = useQuery(api.queries.getAllStatuses);
 
+  const [searchUntil, setsearchUntil] = useState("");
+
+  const [searchValue, setSearchValue] = useState(
+    (table.getState().globalFilter as string) ?? ""
+  );
+
+
   const toOptions = (items: any[] = []) =>
     items.map((item) => [item.name, item.name] as [string, string]);
 
   const hasFilters =
-    Boolean(table.getState().globalFilter) ||
+    Boolean(searchValue) ||
+    Boolean(searchUntil) ||
     table.getState().columnFilters.length > 0;
-
   const control =
     "h-11 min-w-0 rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-700 outline-none focus:border-indigo-400 focus:ring-4 focus:ring-indigo-50";
 
   const setValue = (column: string, value: string) =>
     table.getColumn(column)?.setFilterValue(value || undefined);
 
+  const applySearch = () => {
+    onSearch?.({
+      search: searchValue,
+      searchUntil,
+    });
+  };
+
+  const clearAll = () => {
+    setSearchValue("");
+    setsearchUntil("");
+
+    table.resetColumnFilters();
+
+    onSearch?.({
+      search: "",
+      searchUntil: "",
+    });
+  };
+
+
   const isLoading =
     regions === undefined ||
     agencies === undefined ||
     activities === undefined ||
     statuses === undefined;
+
+
 
   return (
     <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
@@ -58,10 +94,7 @@ export function DataTableToolbar<TData>({
         {hasFilters && (
           <button
             type="button"
-            onClick={() => {
-              table.resetGlobalFilter();
-              table.resetColumnFilters();
-            }}
+            onClick={clearAll}
             className="inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100"
           >
             <X className="h-3.5 w-3.5" />
@@ -71,73 +104,133 @@ export function DataTableToolbar<TData>({
       </div>
 
       {/* Search bar – centered */}
-      <div className="mb-4 flex justify-center">
-        <label className="relative w-full max-w-2xl">
-          <span className="sr-only">{tr("الكلمة المفتاحية", "Keyword")}</span>
-          <Search className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-          <input
-            value={(table.getState().globalFilter as string) ?? ""}
-            onChange={(event) => table.setGlobalFilter(event.target.value)}
-            placeholder={tr(
-              "ابحث بالعنوان، الرقم، الجهة، الوصف أو كلمة مفتاحية...",
-              "Search title, reference, agency, description, or keyword...",
-            )}
-            className={`${control} w-full bg-slate-50 pe-3 ps-10 focus:bg-white`}
-          />
-        </label>
+      <div className="mb-6 flex justify-center">
+        <div className="flex w-full max-w-3xl gap-2">
+          <label className="relative flex-1">
+            <Search className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+
+            <input
+              value={searchValue}
+              onChange={(e) => setSearchValue(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  applySearch();
+                }
+              }}
+              placeholder={tr(
+                "ابحث بالعنوان، الرقم، الجهة، الوصف أو كلمة مفتاحية...",
+                "Search title, reference, agency, description, or keyword..."
+              )}
+              className={`${control} w-full bg-slate-50 pe-3 ps-10 focus:bg-white`}
+            />
+          </label>
+
+          {/* Search */}
+          <button
+            type="button"
+            onClick={applySearch}
+            className="flex h-11 items-center gap-2 rounded-xl bg-indigo-600 px-4 text-sm font-medium text-white transition hover:bg-indigo-700 focus:ring-4 focus:ring-indigo-200"
+          >
+            <Search className="h-4 w-4" />
+            {tr("بحث", "Search")}
+          </button>
+          {/* Clear */}
+          <button
+            type="button"
+            onClick={clearAll}
+            className="flex h-11 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-medium text-slate-600 transition hover:bg-slate-50"
+          >
+            <X className="h-4 w-4" />
+            {tr("مسح", "Clear")}
+          </button>
+        </div>
       </div>
- 
-      <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
-        <FilterSelect
-          label={tr("المنطقة", "Region")}
-          value={(table.getColumn("region")?.getFilterValue() as string) ?? ""}
-          onChange={(value) => setValue("region", value)}
-          options={toOptions(regions)}
-          all={tr("جميع المناطق", "All regions")}
-          className={control}
-          loading={isLoading}
-        />
 
-        <FilterSelect
-          label={tr("الجهة", "Agency")}
-          value={(table.getColumn("agency")?.getFilterValue() as string) ?? ""}
-          onChange={(value) => setValue("agency", value)}
-          options={toOptions(agencies)}
-          all={tr("جميع الجهات", "All agencies")}
-          className={control}
-          loading={isLoading}
-        />
+      {/* Date Range (Archive only) */}
+      {isArchived && (
+        <div className="mb-6 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+          <h3 className="mb-4 text-sm font-semibold text-slate-700">
+            {tr("الفترة الزمنية", "Date range")}
+          </h3>
 
-        <FilterSelect
-          label={tr("النشاط / القطاع", "Activity / sector")}
-          value={
-            (table.getColumn("activity")?.getFilterValue() as string) ?? ""
-          }
-          onChange={(value) => setValue("activity", value)}
-          options={toOptions(activities)}
-          all={tr("جميع الأنشطة", "All activities")}
-          className={control}
-          loading={isLoading}
-        />
+          <div className="grid gap-4 md:grid-cols-2">
+            <div>
+              <label className="mb-2 block text-xs font-medium text-slate-500">
+                {tr("إلى", "searchUntil")}
+              </label>
+              <input
+                type="date"
+                value={searchUntil}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setsearchUntil(value);
 
-        <FilterSelect
-          label={tr("الحالة", "Status")}
-          value={
-            (table.getColumn("workflow_status")?.getFilterValue() as string) ??
-            ""
-          }
-          onChange={(value) => setValue("workflow_status", value)}
-          options={(statuses ?? []).map((item) => [item.id, item.name])}
-          all={tr("كل الحالات", "All statuses")}
-          className={control}
-          loading={isLoading}
-        />
+                  onSearch?.({
+                    search: searchValue,
+                    searchUntil: value,
+                  });
+                }}
+                className={`${control} w-full`}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Filters */}
+      <div className="rounded-2xl border border-slate-200 bg-white p-4">
+        <h3 className="mb-4 text-sm font-semibold text-slate-700">
+          {tr("الفلاتر", "Filters")}
+        </h3>
+
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          <FilterSelect
+            label={tr("المنطقة", "Region")}
+            value={(table.getColumn("region")?.getFilterValue() as string) ?? ""}
+            onChange={(value) => setValue("region", value)}
+            options={toOptions(regions)}
+            all={tr("جميع المناطق", "All regions")}
+            className={control}
+            loading={isLoading}
+          />
+
+          <FilterSelect
+            label={tr("الجهة", "Agency")}
+            value={(table.getColumn("agency")?.getFilterValue() as string) ?? ""}
+            onChange={(value) => setValue("agency", value)}
+            options={toOptions(agencies)}
+            all={tr("جميع الجهات", "All agencies")}
+            className={control}
+            loading={isLoading}
+          />
+
+          <FilterSelect
+            label={tr("النشاط / القطاع", "Activity / Sector")}
+            value={(table.getColumn("activity")?.getFilterValue() as string) ?? ""}
+            onChange={(value) => setValue("activity", value)}
+            options={toOptions(activities)}
+            all={tr("جميع الأنشطة", "All activities")}
+            className={control}
+            loading={isLoading}
+          />
+
+          <FilterSelect
+            label={tr("الحالة", "Status")}
+            value={
+              (table.getColumn("original_status")?.getFilterValue() as string) ?? ""
+            }
+            onChange={(value) => setValue("original_status", value)}
+            options={(statuses ?? []).map((item) => [item.name, item.name])}
+            all={tr("كل الحالات", "All statuses")}
+            className={control}
+            loading={isLoading}
+          />
+        </div>
       </div>
     </section>
   );
 }
 
-// Enhanced FilterSelect with loading state
 function FilterSelect({
   label,
   value,
@@ -155,17 +248,25 @@ function FilterSelect({
   className: string;
   loading?: boolean;
 }) {
+  const { tr } = useLanguage();
+
   return (
-    <label className="grid gap-1.5 text-xs font-medium text-slate-600">
-      {label}
+    <div>
+      <label className="mb-2 block text-xs font-medium text-slate-500">
+        {label}
+      </label>
+
       <select
         aria-label={label}
         value={value}
-        onChange={(event) => onChange(event.target.value)}
-        className={className}
+        onChange={(e) => onChange(e.target.value)}
+        className={`${className} w-full`}
         disabled={loading}
       >
-        <option value="">{loading ? "جاري التحميل..." : all}</option>
+        <option value="">
+          {loading ? tr("جارٍ التحميل...", "Loading...") : all}
+        </option>
+
         {!loading &&
           options.map(([optionValue, text]) => (
             <option key={optionValue} value={optionValue}>
@@ -173,6 +274,6 @@ function FilterSelect({
             </option>
           ))}
       </select>
-    </label>
+    </div>
   );
 }

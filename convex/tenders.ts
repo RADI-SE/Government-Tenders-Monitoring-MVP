@@ -19,8 +19,8 @@ export const getActiveTenders = query({
       .query("tenders")
       .filter((q) =>
         q.or(
-          q.eq(q.field("archived"), false),
-          q.eq(q.field("archived"), undefined)
+          q.eq(q.field("favorite"), false),
+          q.eq(q.field("favorite"), undefined)
         )
       )
       .collect();
@@ -34,8 +34,8 @@ export const archiveTender = mutation({
 
   handler: async (ctx, args) => {
     await ctx.db.patch(args.tenderId, {
-      archived: true,
-      archivedAt: Date.now(),
+      favorite: true,
+      favoritedAt: Date.now(),
     });
 
     return {
@@ -52,8 +52,7 @@ export const restoreTender = mutation({
 
   handler: async (ctx, args) => {
     await ctx.db.patch(args.tenderId, {
-      archived: false,
-      archivedAt: undefined,
+      favorite: false,
     });
 
     return {
@@ -63,13 +62,54 @@ export const restoreTender = mutation({
 });
 
  
-export const getArchivedTenders = query({
+export const getfavoriteTenders = query({
   handler: async (ctx) => {
     return await ctx.db
       .query("tenders")
       .filter((q) =>
-        q.eq(q.field("archived"), true)
+        q.eq(q.field("favorite"), true)
       )
       .collect();
+  },
+});
+
+export const getArchivedTenders = query({
+  handler: async (ctx) => {
+    return await ctx.db.query("archivedTenders").collect();
+  },
+});
+
+export const cleanupExpiredTenders = mutation({
+  handler: async (ctx) => {
+    const tenders = await ctx.db.query("tenders").collect();
+
+    const finalStatuses = [
+      "تم اعتماد الترسية",
+      "تم الإلغاء",
+      "تم رفض الترسية",
+    ];
+
+    for (const tender of tenders) {
+      const expired =
+        tender.last_submission_date &&
+        new Date(tender.last_submission_date) < new Date();
+
+      const finished = finalStatuses.includes(
+        tender.original_status ?? ""
+      );
+
+      if (!expired && !finished) continue;
+
+      const { _id, _creationTime, ...data } = tender;
+
+      await ctx.db.insert("archivedTenders", {
+        ...data,
+        archived: true,
+        archive_reason: expired ? "expired" : "completed",
+        archivedAt: Date.now(),
+      });
+
+      await ctx.db.delete(_id);
+    }
   },
 });

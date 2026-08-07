@@ -42,7 +42,7 @@ export function TenderDetails({
     tenderId: tender._id,
   });
   const tasks = useQuery(api.tasks.getByTender, { tenderId: tender._id });
-  const [status, setStatus] = useState(tender.workflow_status);
+  const [status, setStatus] = useState(tender.original_status);
   const [reminder, setReminder] = useState("");
   const [savedReminder, setSavedReminder] = useState("");
   const [creating, setCreating] = useState(false);

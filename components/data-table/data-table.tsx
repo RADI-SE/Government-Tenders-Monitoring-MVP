@@ -15,29 +15,39 @@ import { DataTableToolbar } from "./data-table-toolbar";
 import { DataTablePagination } from "./data-table-pagination";
 import { LocalizedText } from "@/app/components/language-provider";
 
-interface DataTableProps<TData, TValue> {
+export interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  totalRows?: number;
+  isArchived?: boolean;
+  onSearch?: (filters: {
+    search: string;
+    searchUntil: string;
+   }) => void;
 }
+
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  totalRows,
+  isArchived = false,
+  onSearch,
 }: DataTableProps<TData, TValue>) {
+
   const [pagination, setPagination] = React.useState({
     pageIndex: 0,
     pageSize: 10,
   });
-  const [globalFilter, setGlobalFilter] = React.useState("");
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
   );
   const table = useReactTable({
     data,
     columns,
-    state: { pagination, globalFilter, columnFilters },
+    state: { pagination,columnFilters },
     onPaginationChange: setPagination,
-    onGlobalFilterChange: setGlobalFilter,
+ 
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
@@ -56,9 +66,12 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="space-y-5">
+
       <DataTableToolbar
         table={table}
         totalRows={table.getCoreRowModel().rows.length}
+        isArchived={isArchived}
+        onSearch={onSearch}
       />
       <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
         <table className="w-full min-w-[940px]">
@@ -73,9 +86,9 @@ export function DataTable<TData, TValue>({
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
+                        header.column.columnDef.header,
+                        header.getContext(),
+                      )}
                   </th>
                 ))}
               </tr>

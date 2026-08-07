@@ -4,6 +4,7 @@ import { createContext, useContext, useState } from "react";
 import { useRouter } from "next/navigation";
 import { formatDate, deadlineLabel } from "@/app/utils/date";
 import type { Doc } from "@/convex/_generated/dataModel";
+import { CompetitionStatus } from "@/components/competitions/competition-status";
 
 type BackendTender = Doc<"tenders">;
 
@@ -15,7 +16,7 @@ const LanguageContext = createContext<{
   tr: (ar: string, en: string) => string;
 }>({
   language: "ar",
-  toggle: () => {},
+  toggle: () => { },
   tr: (ar) => ar,
 });
 
@@ -96,34 +97,34 @@ export function ScoreRing({
 export function StatusBadge({ status }: { status: string }) {
   const { language } = useLanguage();
   const labels: Record<string, { ar: string; en: string; className: string }> =
-    {
-      new: { ar: "جديد", en: "New", className: "bg-blue-100 text-blue-800" },
-      reviewing: {
-        ar: "قيد المراجعة",
-        en: "Reviewing",
-        className: "bg-yellow-100 text-yellow-800",
-      },
-      interested: {
-        ar: "مثير للاهتمام",
-        en: "Interested",
-        className: "bg-green-100 text-green-800",
-      },
-      not_suitable: {
-        ar: "غير مناسب",
-        en: "Not suitable",
-        className: "bg-red-100 text-red-800",
-      },
-      submitted: {
-        ar: "تم التقديم",
-        en: "Submitted",
-        className: "bg-purple-100 text-purple-800",
-      },
-      archived: {
-        ar: "مؤرشف",
-        en: "Archived",
-        className: "bg-gray-100 text-gray-800",
-      },
-    };
+  {
+    new: { ar: "جديد", en: "New", className: "bg-blue-100 text-blue-800" },
+    reviewing: {
+      ar: "قيد المراجعة",
+      en: "Reviewing",
+      className: "bg-yellow-100 text-yellow-800",
+    },
+    interested: {
+      ar: "مثير للاهتمام",
+      en: "Interested",
+      className: "bg-green-100 text-green-800",
+    },
+    not_suitable: {
+      ar: "غير مناسب",
+      en: "Not suitable",
+      className: "bg-red-100 text-red-800",
+    },
+    submitted: {
+      ar: "تم التقديم",
+      en: "Submitted",
+      className: "bg-purple-100 text-purple-800",
+    },
+    archived: {
+      ar: "مؤرشف",
+      en: "Archived",
+      className: "bg-gray-100 text-gray-800",
+    },
+  };
   const info = labels[status] || labels.new;
   return (
     <span
@@ -244,8 +245,8 @@ export function TenderTable({ tenders }: { tenders: BackendTender[] }) {
                 <ScoreRing score={getScore(tender)} small />
               </td>
               <td className="p-4">
-                <StatusBadge status={tender.workflow_status} />
-              </td>
+                <CompetitionStatus status={tender.original_status} />           
+                   </td>
               <td className="p-4">
                 <button
                   className="text-blue-600 hover:underline"

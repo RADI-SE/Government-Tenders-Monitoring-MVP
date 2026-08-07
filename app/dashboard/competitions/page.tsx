@@ -1,15 +1,19 @@
 "use client";
 
-import { useQuery } from "convex/react";
+import { useQuery, useMutation } from "convex/react";
+import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { BrainCircuit, FileSearch, FolderOpen, Paperclip } from "lucide-react";
 import { api } from "@/convex/_generated/api";
 import { DataTable } from "@/components/data-table/data-table";
 import { columns } from "./columns";
 import { useLanguage } from "@/app/components/language-provider";
-
+ 
 export default function CompetitionsPage() {
+
+
   const tenders = useQuery(api.tenders.getActiveTenders) ?? [];
+  console.log("tenders", tenders);
   const { tr } = useLanguage();
 
   return (

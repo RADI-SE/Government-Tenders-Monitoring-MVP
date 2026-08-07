@@ -1,28 +1,33 @@
 "use client";
 
 import Link from "next/link";
-import { useQuery } from "convex/react";
+import { useQuery,useMutation } from "convex/react";
 import { ArrowLeft, Archive, FileText, Radar, Sparkles } from "lucide-react";
 import { api } from "@/convex/_generated/api";
 import { useLanguage } from "@/app/components/language-provider";
 import { MetricCard } from "@/components/dashboard/metric-card";
 import { CompetitionStatus } from "@/components/competitions/competition-status";
 import { UpcomingDeadlines } from "@/components/dashboard/upcoming-deadlines";
+import { useEffect, useRef } from "react";
 
 export default function DashboardPage() {
+
+    const cleanup = useMutation(api.tenders.cleanupExpiredTenders);
+    const hasRun = useRef(false);
+  
+    useEffect(() => {
+      if (hasRun.current) return;
+  
+      hasRun.current = true;
+  
+      cleanup().catch(console.error);
+    }, [cleanup]);
+  
   const { tr } = useLanguage();
   const tenders = useQuery(api.tenders.getActiveTenders) ?? [];
+ 
   const archivedTenders = useQuery(api.tenders.getArchivedTenders) ?? [];
-  const active = tenders.filter(
-    (tender) => tender.workflow_status !== "archived",
-  );
-  const interested = tenders.filter(
-    (tender) => tender.workflow_status === "interested",
-  ).length;
-  const reviewing = tenders.filter(
-    (tender) => tender.workflow_status === "reviewing",
-  ).length;
-
+ 
   return (
     <div className="mx-auto max-w-[1600px] space-y-6 p-5 md:p-8">
       <section className="relative overflow-hidden rounded-3xl bg-gradient-to-l from-indigo-950 via-indigo-700 to-cyan-500 p-7 text-white shadow-xl shadow-indigo-100 md:p-10">
@@ -59,21 +64,21 @@ export default function DashboardPage() {
         <MetricCard
           title={tr("المنافسات النشطة", "Active competitions")}
           subtitle={tr("فرص قيد المتابعة", "Tracked opportunities")}
-          value={active.length}
+          value={tenders.length}
           icon={FileText}
           tone="indigo"
         />
         <MetricCard
           title={tr("قيد المراجعة", "Under review")}
           subtitle={tr("تحتاج قرار الفريق", "Awaiting team decision")}
-          value={reviewing}
+          value={tenders.filter((tender) => tender.original_status === "قيد المراجعة").length}
           icon={Radar}
           tone="amber"
         />
         <MetricCard
           title={tr("فرص مهتم بها", "Interested opportunities")}
           subtitle={tr("فرص ذات أولوية", "Prioritized opportunities")}
-          value={interested}
+          value={tenders.filter((tender) => tender.original_status === "مهتم").length}
           icon={Sparkles}
           tone="emerald"
         />
@@ -117,7 +122,7 @@ export default function DashboardPage() {
                   {tender.reference_number}
                 </span>
               </div>
-              <CompetitionStatus status={tender.workflow_status} />
+              <CompetitionStatus status={tender.original_status} />
             </div>
           ))}
           {!tenders.length && (

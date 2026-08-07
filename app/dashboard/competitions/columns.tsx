@@ -12,10 +12,10 @@ type NumberRange = { min?: number; max?: number };
 const formatDate = (date?: string) =>
   date
     ? new Intl.DateTimeFormat("ar-SA", {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-      }).format(new Date(date))
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    }).format(new Date(date))
     : "—";
 
 const dateRangeFilter = (value: unknown, range?: DateRange) => {
@@ -70,10 +70,10 @@ export const columns: ColumnDef<Competition>[] = [
     ),
   },
   {
-    accessorKey: "workflow_status",
+    accessorKey: "original_status",
     header: () => <LocalizedText ar="الحالة" en="Status" />,
     cell: ({ row }) => (
-      <CompetitionStatus status={row.original.workflow_status} />
+      <span>{row.original.original_status}</span>
     ),
   },
 

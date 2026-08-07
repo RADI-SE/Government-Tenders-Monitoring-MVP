@@ -63,6 +63,6 @@ export const getTendersByAgencyAndStatus = query({
             .query("tenders")
             .withIndex("by_agency_id", (q) => q.eq("agency_id", args.agencyId))
             .collect();
-        return tenders.filter((t) => t.workflow_status === args.status);
+        return tenders.filter((t) => t.original_status === args.status);
     },
 });
