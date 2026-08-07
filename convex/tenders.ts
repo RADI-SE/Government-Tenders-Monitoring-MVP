@@ -61,18 +61,6 @@ export const restoreTender = mutation({
   },
 });
 
- 
-export const getfavoriteTenders = query({
-  handler: async (ctx) => {
-    return await ctx.db
-      .query("tenders")
-      .filter((q) =>
-        q.eq(q.field("favorite"), true)
-      )
-      .collect();
-  },
-});
-
 export const getArchivedTenders = query({
   handler: async (ctx) => {
     return await ctx.db.query("archivedTenders").collect();

@@ -3,7 +3,7 @@
 import { useQuery } from "convex/react";
 import { useState } from "react";
 import Link from "next/link";
-import { BrainCircuit, FileSearch, FolderOpen, Paperclip } from "lucide-react";
+import { BrainCircuit, FileSearch, Paperclip } from "lucide-react";
 import { api } from "@/convex/_generated/api";
 import { DataTable } from "@/components/data-table/data-table";
 import type { DataTableFilters } from "@/components/data-table/data-table";
@@ -126,13 +126,7 @@ export default function CompetitionsPage() {
           <Paperclip className="h-4 w-4" />
           {tr("الوثائق والمرفقات", "Documents")}
         </Link>
-        <Link
-          href="/dashboard/categories"
-          className="inline-flex items-center gap-2 rounded-xl border border-indigo-100 bg-white px-3 py-2 text-xs font-bold text-indigo-700 shadow-sm hover:bg-indigo-50"
-        >
-          <FolderOpen className="h-4 w-4" />
-          {tr("التصنيفات", "Categories")}
-        </Link>
+       
       </nav>
 
       {tenders === undefined ? (

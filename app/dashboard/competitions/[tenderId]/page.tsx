@@ -22,15 +22,24 @@ export default function TenderDetail() {
     tenderId ? { id: Number(tenderId) } : "skip",
   );
 
+  const archivedTender = useQuery(
+    api.ArchivedTenders.getArchivedTenderById,
+    tenderId ? { id: Number(tenderId) } : "skip",
+  );
+
+  console.log("Tender:", tender);
+  console.log("Archived Tender:", archivedTender);
   const [activeTab, setActiveTab] = useState("overview");
 
-  if (tender === undefined) {
-    // loading
-  }
+const currentTender = tender ?? archivedTender;
 
-  if (!tender) {
-    // not found
-  }
+if (tender === undefined && archivedTender === undefined) {
+  return <div>Loading...</div>;
+}
+
+if (!currentTender) {
+  return <div>Tender not found.</div>;
+}
 
   return (
     <div className="space-y-6 p-6">
@@ -38,15 +47,15 @@ export default function TenderDetail() {
 
       <TenderTabs activeTab={activeTab} onChange={setActiveTab} />
 
-      {activeTab === "basic" && <TenderOverview tender={tender} />}
+      {activeTab === "basic" && <TenderOverview tender={currentTender} />}
 
-      {activeTab === "classification" && <TenderDescription tender={tender} />}
+      {activeTab === "classification" && <TenderDescription tender={currentTender} />}
 
-      {activeTab === "awarding" && <TenderAwarding tender={tender} />}
+      {activeTab === "awarding" && <TenderAwarding tender={currentTender} />}
 
-      {activeTab === "dates" && <TenderTimeline tender={tender} />}
+      {activeTab === "dates" && <TenderTimeline tender={currentTender} />}
 
-      {activeTab === "ai" && <TenderAI tender={tender} />}
+      {activeTab === "ai" && <TenderAI tender={currentTender} />}
     </div>
   );
 }

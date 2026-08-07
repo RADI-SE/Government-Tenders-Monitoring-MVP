@@ -11,8 +11,6 @@
 import type * as ArchivedTenders from "../ArchivedTenders.js";
 import type * as aiAnalysis from "../aiAnalysis.js";
 import type * as attachments from "../attachments.js";
-import type * as categories from "../categories.js";
-import type * as importJobs from "../importJobs.js";
 import type * as queries from "../queries.js";
 import type * as tasks from "../tasks.js";
 import type * as tenders from "../tenders.js";
@@ -27,8 +25,6 @@ declare const fullApi: ApiFromModules<{
   ArchivedTenders: typeof ArchivedTenders;
   aiAnalysis: typeof aiAnalysis;
   attachments: typeof attachments;
-  categories: typeof categories;
-  importJobs: typeof importJobs;
   queries: typeof queries;
   tasks: typeof tasks;
   tenders: typeof tenders;

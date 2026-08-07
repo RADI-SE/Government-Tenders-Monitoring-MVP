@@ -8,15 +8,7 @@ export const getAll = query({
   },
 });
 
-export const getById = query({
-  args: {
-    id: v.id("attachments"),
-  },
-
-  handler: async (ctx, args) => {
-    return await ctx.db.get(args.id);
-  },
-});
+ 
 
 export const getByTender = query({
   args: {
@@ -32,29 +24,7 @@ export const getByTender = query({
       .collect();
   },
 });
-
-export const getByType = query({
-  args: {
-    type: v.union(
-      v.literal("pdf"),
-      v.literal("doc"),
-      v.literal("excel"),
-      v.literal("image"),
-      v.literal("zip"),
-      v.literal("other")
-    ),
-  },
-
-  handler: async (ctx, args) => {
-    return await ctx.db
-      .query("attachments")
-      .withIndex("by_type", (q) =>
-        q.eq("type", args.type)
-      )
-      .collect();
-  },
-});
-
+ 
 export const create = mutation({
   args: {
     tenderId: v.id("tenders"),

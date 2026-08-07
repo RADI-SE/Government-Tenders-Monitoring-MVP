@@ -14,16 +14,6 @@ export default defineSchema({
     .index("by_clerkUserId", ["clerkUserId"])
     .index("by_email", ["email"]),
 
-
-  categories: defineTable({
-    externalCategoryId: v.number(), // original activity ID
-    name: v.string(),
-    createdAt: v.number(),
-    updatedAt: v.number(),
-  })
-    .index("by_externalCategoryId", ["externalCategoryId"])
-    .index("by_name", ["name"]),
-
   tenders: defineTable({
     id: v.number(),
     reference_number: v.string(),
@@ -132,42 +122,6 @@ export default defineSchema({
     .index("by_assignedTo", ["assignedTo"])
     .index("by_dueDate", ["dueDate"]),
 
-  reminders: defineTable({
-    tenderId: v.id("tenders"),
-    title: v.string(),
-    reminderType: v.union(
-      v.literal("submission_deadline"),
-      v.literal("award_date"),
-      v.literal("custom")
-    ),
-    remindAt: v.number(),
-    isSent: v.boolean(),
-    createdAt: v.number(),
-  })
-    .index("by_tender", ["tenderId"])
-    .index("by_remindAt", ["remindAt"])
-    .index("by_isSent", ["isSent"]),
-
-  importJobs: defineTable({
-    source: v.union(v.literal("etimad"), v.literal("csv"), v.literal("manual")),
-    status: v.union(
-      v.literal("running"),
-      v.literal("completed"),
-      v.literal("failed")
-    ),
-    totalFetched: v.number(),
-    totalImported: v.number(),
-    totalSkipped: v.number(),
-    totalFailed: v.number(),
-    startedAt: v.number(),
-    finishedAt: v.optional(v.number()),
-    durationMs: v.optional(v.number()),
-    initiatedBy: v.optional(v.id("users")),
-    errorMessage: v.optional(v.string()),
-  })
-    .index("by_status", ["status"])
-    .index("by_startedAt", ["startedAt"])
-    .index("by_source", ["source"]),
 
   regions: defineTable({
     id: v.number(),

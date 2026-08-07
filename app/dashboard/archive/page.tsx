@@ -6,8 +6,8 @@ import { api } from "@/convex/_generated/api";
 import { DataTable } from "@/components/data-table/data-table";
 import { ResourcePage } from "@/components/dashboard/resource-page";
 import { columns } from "../competitions/columns";
-import type { Competition } from "../competitions/types";
-import { useEffect, useState } from "react";
+
+import { useState } from "react";
 
 export default function ArchivePage() {
 
@@ -21,16 +21,16 @@ export default function ArchivePage() {
   });
 
   const archived = useQuery(api.ArchivedTenders.getArchivedTenders, {
-    searchUntil: filters.searchUntil || undefined,
     search: filters.search || undefined,
+    searchUntil: filters.searchUntil || undefined,
+    regionId: filters.regionId || undefined,
+    agencyId: filters.agencyId || undefined,
+    activityId: filters.activityId || undefined,
+    status: filters.status || undefined,
   });
-  const [displayedTenders, setDisplayedTenders] = useState<Competition[]>([]);
 
-  useEffect(() => {
-    if (archived !== undefined) {
-      setDisplayedTenders(archived as unknown as Competition[]);
-    }
-  }, [archived]);
+  console.log("Archived Tenders:", archived);
+
 
   return (
     <ResourcePage
@@ -43,7 +43,7 @@ export default function ArchivePage() {
     >
       <DataTable
         columns={columns}
-        data={displayedTenders}
+        data={archived || []}
         isArchived
         onSearch={setFilters}
       />

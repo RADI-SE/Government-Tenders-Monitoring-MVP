@@ -7,7 +7,7 @@ import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useEffect, useRef, useState } from "react";
 import type { DataTableFilters } from "./data-table";
-
+import { ARCHIVED_STATUSES } from "@/lib/tender-statuses";
 type LookupOption = {
   id: number | string;
   name: string;
@@ -30,7 +30,11 @@ export function DataTableToolbar({
   const agencies = useQuery(api.queries.getAllAgencies);
   const activities = useQuery(api.queries.getAllActivities);
   const statuses = useQuery(api.queries.getAllStatuses);
-
+  const filteredStatuses = (statuses ?? []).filter((status) =>
+    isArchived
+      ? ARCHIVED_STATUSES.includes(status.name as any)
+      : !ARCHIVED_STATUSES.includes(status.name as any)
+  );
   const [searchUntil, setsearchUntil] = useState("");
   const [regionId, setRegionId] = useState("");
   const [agencyId, setAgencyId] = useState("");
@@ -65,9 +69,8 @@ export function DataTableToolbar({
 
   const setValue = (column: string, value: string) =>
     table.getColumn(column)?.setFilterValue(value || undefined);
-
   const applySearch = (overrides: Partial<DataTableFilters> = {}) => {
-    onSearch?.({
+    const filters = {
       search: searchValue,
       searchUntil,
       regionId,
@@ -75,9 +78,9 @@ export function DataTableToolbar({
       activityId,
       status,
       ...overrides,
-    });
+    };
+    onSearch?.(filters);
   };
-
   const clearAll = () => {
     if (dateSearchTimer.current) clearTimeout(dateSearchTimer.current);
     setSearchValue("");
@@ -170,19 +173,9 @@ export function DataTableToolbar({
             <Search className="h-4 w-4" />
             {tr("بحث", "Search")}
           </button>
-          {/* Clear */}
-          <button
-            type="button"
-            onClick={clearAll}
-            className="flex h-11 items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 text-sm font-medium text-slate-600 transition hover:bg-slate-50"
-          >
-            <X className="h-4 w-4" />
-            {tr("مسح", "Clear")}
-          </button>
         </div>
       </div>
 
-      {/* Date Range (Archive only) */}
       {isArchived && (
         <div className="mb-6 rounded-2xl border border-slate-200 bg-slate-50 p-4">
           <h3 className="mb-4 text-sm font-semibold text-slate-700">
@@ -280,8 +273,8 @@ export function DataTableToolbar({
               setValue("original_status", value);
               if (!isArchived) applySearch({ status: value });
             }}
-            options={(statuses ?? []).map((item) => [item.name, item.name])}
-            all={tr("كل الحالات", "All statuses")}
+            options={filteredStatuses.map((item) => [item.name, item.name])}
+             all={tr("كل الحالات", "All statuses")}
             className={control}
             loading={isLoading}
           />

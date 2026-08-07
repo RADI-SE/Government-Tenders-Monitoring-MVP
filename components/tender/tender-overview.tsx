@@ -9,7 +9,7 @@ interface TenderOverviewProps {
 
 export function TenderOverview({ tender }: TenderOverviewProps) {
   const raw = tender?.raw_data;
-
+  console.log("TenderOverview raw data:", tender);
   // Helper: format dates in Arabic
   const formatDateArabic = (date?: string) => {
     if (!date) return "-";

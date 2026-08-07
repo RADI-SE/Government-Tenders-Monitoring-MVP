@@ -13,9 +13,12 @@ const labels: Record<string, [string, string]> = {
   archived: ["مؤرشفة", "Archived"],
 
   // Original Etimad statuses
-  "معتمدة": ["معتمدة", "Approved"],
+  معتمدة: ["معتمدة", "Approved"],
   "تم اعتماد الترسية": ["تم اعتماد الترسية", "Awarded"],
-  "تم اعتماد الترسية المبدئي": ["تم اعتماد الترسية المبدئي", "Preliminary Award"],
+  "تم اعتماد الترسية المبدئي": [
+    "تم اعتماد الترسية المبدئي",
+    "Preliminary Award",
+  ],
   "مرحلة الترسية": ["مرحلة الترسية", "Award Stage"],
   "تم الإلغاء": ["تم الإلغاء", "Cancelled"],
   "تم فتح العروض": ["تم فتح العروض", "Offers Opened"],
@@ -33,7 +36,7 @@ const tones: Record<string, string> = {
   archived: "border-slate-200 bg-slate-100 text-slate-600",
 
   // Etimad
-  "معتمدة": "border-green-100 bg-green-50 text-green-700",
+  معتمدة: "border-green-100 bg-green-50 text-green-700",
   "تم اعتماد الترسية": "border-emerald-100 bg-emerald-50 text-emerald-700",
   "تم اعتماد الترسية المبدئي": "border-lime-100 bg-lime-50 text-lime-700",
   "مرحلة الترسية": "border-indigo-100 bg-indigo-50 text-indigo-700",
@@ -53,7 +56,7 @@ export function CompetitionStatus({ status }: { status?: string }) {
     <span
       className={cn(
         "inline-flex whitespace-nowrap rounded-full border px-2.5 py-1 text-xs font-semibold",
-        tones[value] ?? "border-slate-200 bg-slate-50 text-slate-600"
+        tones[value] ?? "border-slate-200 bg-slate-50 text-slate-600",
       )}
     >
       {label ? tr(label[0], label[1]) : value || tr("غير محدد", "Unknown")}
