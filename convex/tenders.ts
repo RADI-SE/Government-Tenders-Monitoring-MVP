@@ -101,3 +101,50 @@ export const cleanupExpiredTenders = mutation({
     }
   },
 });
+
+
+
+export const searchActiveTenders = query({
+  args: {
+    search: v.optional(v.string()),
+    regionId: v.optional(v.string()),
+    agencyId: v.optional(v.string()),
+    activityId: v.optional(v.string()),
+    status: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    let filtered = await ctx.db.query("tenders").collect();
+ 
+    if (args.search?.trim()) {
+      const term = args.search.toLowerCase().trim();
+      filtered = filtered.filter(t =>
+        t.tender_name?.toLowerCase().includes(term) ||
+        t.reference_number?.toLowerCase().includes(term) ||
+        t.description?.toLowerCase().includes(term)
+      );
+    }
+ 
+    if (args.regionId) {
+      const regionIdNum = Number(args.regionId);
+      filtered = filtered.filter(t => t.region_id === regionIdNum);
+    }
+
+    if (args.agencyId) {
+      const agencyIdNum = Number(args.agencyId);
+      filtered = filtered.filter(t => t.agency_id === agencyIdNum);
+    }
+
+    if (args.activityId) {
+      const activityIdNum = Number(args.activityId);
+      filtered = filtered.filter(t =>
+        t.activity_ids && t.activity_ids.includes(activityIdNum)
+      );
+    }
+
+    if (args.status) {
+      filtered = filtered.filter(t => t.original_status === args.status);
+    }
+ 
+     return filtered;
+  },
+});

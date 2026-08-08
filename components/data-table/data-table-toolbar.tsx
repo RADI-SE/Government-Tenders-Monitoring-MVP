@@ -5,9 +5,10 @@ import type { Table } from "@tanstack/react-table";
 import { useLanguage } from "@/app/components/language-provider";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react"; // useEffect and useRef removed
 import type { DataTableFilters } from "./data-table";
 import { ARCHIVED_STATUSES } from "@/lib/tender-statuses";
+
 type LookupOption = {
   id: number | string;
   name: string;
@@ -40,18 +41,10 @@ export function DataTableToolbar({
   const [agencyId, setAgencyId] = useState("");
   const [activityId, setActivityId] = useState("");
   const [status, setStatus] = useState("");
-  const dateSearchTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [searchValue, setSearchValue] = useState(
     (table.getState().globalFilter as string) ?? ""
   );
-
-  useEffect(() => {
-    return () => {
-      if (dateSearchTimer.current) clearTimeout(dateSearchTimer.current);
-    };
-  }, []);
-
 
   const toOptions = (items: LookupOption[] = []) =>
     items.map((item) => [String(item.id), item.name] as [string, string]);
@@ -69,6 +62,8 @@ export function DataTableToolbar({
 
   const setValue = (column: string, value: string) =>
     table.getColumn(column)?.setFilterValue(value || undefined);
+
+  // ---------- ONLY CALLED ON BUTTON CLICK OR ENTER ----------
   const applySearch = (overrides: Partial<DataTableFilters> = {}) => {
     const filters = {
       search: searchValue,
@@ -81,8 +76,8 @@ export function DataTableToolbar({
     };
     onSearch?.(filters);
   };
+
   const clearAll = () => {
-    if (dateSearchTimer.current) clearTimeout(dateSearchTimer.current);
     setSearchValue("");
     setsearchUntil("");
     setRegionId("");
@@ -102,14 +97,11 @@ export function DataTableToolbar({
     });
   };
 
-
   const isLoading =
     regions === undefined ||
     agencies === undefined ||
     activities === undefined ||
     statuses === undefined;
-
-
 
   return (
     <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
@@ -149,7 +141,7 @@ export function DataTableToolbar({
               onChange={(e) => setSearchValue(e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
-                  applySearch();
+                  applySearch(); // ✅ ONLY on Enter
                 }
               }}
               placeholder={tr(
@@ -164,10 +156,10 @@ export function DataTableToolbar({
             />
           </label>
 
-          {/* Search */}
+          {/* ✅ Search button – already existed, now it's the ONLY trigger for dropdowns/date too */}
           <button
             type="button"
-            onClick={() => applySearch()}
+            onClick={() => applySearch()} // ✅ ONLY on click
             className="flex h-11 items-center gap-2 rounded-xl bg-indigo-600 px-4 text-sm font-medium text-white transition hover:bg-indigo-700 focus:ring-4 focus:ring-indigo-200"
           >
             <Search className="h-4 w-4" />
@@ -192,22 +184,7 @@ export function DataTableToolbar({
                 value={searchUntil}
                 onChange={(e) => {
                   const value = e.target.value;
-                  setsearchUntil(value);
-
-                  if (dateSearchTimer.current) {
-                    clearTimeout(dateSearchTimer.current);
-                  }
-
-                  dateSearchTimer.current = setTimeout(() => {
-                    onSearch?.({
-                      search: searchValue,
-                      searchUntil: value,
-                      regionId,
-                      agencyId,
-                      activityId,
-                      status,
-                    });
-                  }, 700);
+                  setsearchUntil(value); // ✅ ONLY update state – NO applySearch
                 }}
                 className={`${control} w-full`}
               />
@@ -227,9 +204,9 @@ export function DataTableToolbar({
             label={tr("المنطقة", "Region")}
             value={regionId}
             onChange={(value) => {
-              setRegionId(value);
-              setValue("region", value);
-              if (!isArchived) applySearch({ regionId: value });
+              setRegionId(value);           // ✅ update state
+              setValue("region", value);    // ✅ update table UI
+              // ❌ NO applySearch here
             }}
             options={toOptions(regions)}
             all={tr("جميع المناطق", "All regions")}
@@ -243,7 +220,7 @@ export function DataTableToolbar({
             onChange={(value) => {
               setAgencyId(value);
               setValue("agency", value);
-              if (!isArchived) applySearch({ agencyId: value });
+              // ❌ NO applySearch here
             }}
             options={toOptions(agencies)}
             all={tr("جميع الجهات", "All agencies")}
@@ -257,7 +234,7 @@ export function DataTableToolbar({
             onChange={(value) => {
               setActivityId(value);
               setValue("activity", value);
-              if (!isArchived) applySearch({ activityId: value });
+              // ❌ NO applySearch here
             }}
             options={toOptions(activities)}
             all={tr("جميع الأنشطة", "All activities")}
@@ -271,10 +248,10 @@ export function DataTableToolbar({
             onChange={(value) => {
               setStatus(value);
               setValue("original_status", value);
-              if (!isArchived) applySearch({ status: value });
+              // ❌ NO applySearch here
             }}
             options={filteredStatuses.map((item) => [item.name, item.name])}
-             all={tr("كل الحالات", "All statuses")}
+            all={tr("كل الحالات", "All statuses")}
             className={control}
             loading={isLoading}
           />
